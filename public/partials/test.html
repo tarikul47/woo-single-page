@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* Filing Options */
+        .filing-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filing-option {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .filing-option label {
+            display: block;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filing-option input:checked+label {
+            border-color: #0066cc;
+            background: #f0f8ff;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.1);
+        }
+
+        .filing-option h3 {
+            color: #333;
+            margin: 0 0 8px 0;
+            font-size: 18px;
+        }
+
+        /* Addons Styling */
+        .addon-container {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+            display: none;
+            /* Initially hidden */
+        }
+
+        .addon-container h4 {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .addon-option {
+            margin-bottom: 12px;
+        }
+
+        .addon-option label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            padding-left: 45px;
+        }
+
+        .addon-option input:checked+label {
+            border-color: #0066cc;
+            background: #f0f8ff;
+        }
+
+        .addon-option label:before {
+            content: "";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid #999;
+            border-radius: 50%;
+            background: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .addon-option input:checked+label:after {
+            content: "";
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #0066cc;
+            border-radius: 50%;
+        }
+
+        .addon-price {
+            color: #0066cc;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Hide native radio buttons */
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            height: 0;
+            width: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HTML remains mostly the same with corrected label structures -->
+    <div class="checkout-section" id="section-4">
+        <!-- ... same section header ... -->
+
+        <div class="section-content">
+            <div class="filing-options">
+                <!-- ... same filing options structure ... -->
+            </div>
+
+            <!-- Addon Containers -->
+            <div class="addon-container" id="basic-addons">
+                <h4>Choose an Addon for Basic Package</h4>
+                <div class="addon-option">
+                    <input type="radio" id="basic-addon1" name="basic_addon" value="business_presence">
+                    <label for="basic-addon1">
+                        Business Presence Package
+                        <span class="addon-price">($50)</span>
+                    </label>
+                </div>
+                <!-- ... other basic addons ... -->
+            </div>
+
+            <!-- Gold and Premium addons similarly structured -->
+        </div>
+    </div>
+</body>
+
+</html>

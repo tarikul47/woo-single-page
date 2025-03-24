@@ -72,7 +72,6 @@ class Woo_Single_Page_Admin
 
 		// Get form data
 		$cart_items = isset($_POST['cart_items']) ? $_POST['cart_items'] : array();
-		error_log('Cart items: ' . print_r($cart_items, true));
 
 		// Get product ID
 		$product_id = 0;
@@ -97,37 +96,46 @@ class Woo_Single_Page_Admin
 			exit;
 		}
 
-		error_log('Adding product ID to cart: ' . $product_id);
+		//	error_log('Adding product ID to cart: ' . $product_id);
 
 		// Validate required fields
 		$company_names = $this->get_form_values($cart_items, 'company_name');
+
 		if (empty($company_names)) {
 			wp_send_json_error(array('message' => 'Company name is required'));
 			exit;
 		}
 
 		// Validate management information
-		$management_type = $this->get_form_value($cart_items, 'management_type');
-		if ($management_type === 'member') {
-			$member_names = $this->get_form_values($cart_items, 'member_name');
-			$member_emails = $this->get_form_values($cart_items, 'member_email');
+		// $management_type = $this->get_form_value($cart_items, 'management_type');
+		// if ($management_type === 'member') {
+		// 	$member_names = $this->get_form_values($cart_items, 'member_name');
+		// 	$member_emails = $this->get_form_values($cart_items, 'member_email');
 
-			if (empty($member_names) || empty($member_emails)) {
-				wp_send_json_error(array('message' => 'Member information is required'));
-				exit;
-			}
-		} else {
-			$manager_names = $this->get_form_values($cart_items, 'manager_name');
-			$manager_emails = $this->get_form_values($cart_items, 'manager_email');
+		// 	if (empty($member_names) || empty($member_emails)) {
+		// 		wp_send_json_error(array('message' => 'Member information is required'));
+		// 		exit;
+		// 	}
+		// } else {
+		// 	$manager_names = $this->get_form_values($cart_items, 'manager_name');
+		// 	$manager_emails = $this->get_form_values($cart_items, 'manager_email');
 
-			if (empty($manager_names) || empty($manager_emails)) {
-				wp_send_json_error(array('message' => 'Manager information is required'));
-				exit;
-			}
-		}
+		// 	if (empty($manager_names) || empty($manager_emails)) {
+		// 		wp_send_json_error(array('message' => 'Manager information is required'));
+		// 		exit;
+		// 	}
+		// }
+
+
+		// Get members and managers (only names)
+		$member_names = $this->get_form_values($cart_items, 'member_name');
+		$manager_names = $this->get_form_values($cart_items, 'manager_name');
+
+		//error_log('member_names items: ' . print_r($member_names, true));
+		error_log('manager_names items: ' . print_r($cart_items, true));
 
 		// Validate addon selection
-		$addon_selection = $this->get_form_value($cart_items, 'addon_selection');
+		$addon_selection = $this->get_form_value($cart_items, 'addon_selection[]');
 		if (empty($addon_selection)) {
 			wp_send_json_error(array('message' => 'Business addon selection is required'));
 			exit;
@@ -169,7 +177,7 @@ class Woo_Single_Page_Admin
 		$custom_data = array(
 			'company_names' => $company_names,
 			'business_type' => $this->get_form_value($cart_items, 'business_type'),
-			'management_type' => $management_type,
+			//'management_type' => $management_type,
 			'filing_option' => $filing_option,
 			'addon_selection' => $addon_selection,
 			'base_price' => $base_price,
@@ -177,20 +185,18 @@ class Woo_Single_Page_Admin
 			'total_price' => $total_price
 		);
 
-		// Add member or manager data if present
-		if ($management_type === 'member') {
-			$custom_data['members'] = array(
-				'names' => $member_names,
-				'emails' => $member_emails,
-				'phones' => $this->get_form_values($cart_items, 'member_phone'),
-			);
-		} else {
-			$custom_data['managers'] = array(
-				'names' => $manager_names,
-				'emails' => $manager_emails,
-				'phones' => $this->get_form_values($cart_items, 'manager_phone'),
-			);
+		// Add members if available
+		if (!empty($member_names)) {
+			$custom_data['members'] = $member_names;
 		}
+
+		// Add managers if available
+		if (!empty($manager_names)) {
+			$custom_data['managers'] = $manager_names;
+		}
+
+		//error_log('manager_names items: ' . print_r($manager_names, true));
+		error_log('custom_data raju items: ' . print_r($custom_data, true));
 
 		// Make sure WC is loaded and cart is available
 		if (!function_exists('WC') || !isset(WC()->cart)) {
@@ -227,18 +233,32 @@ class Woo_Single_Page_Admin
 	/**
 	 * Helper function to get form values from cart items array
 	 */
+	// private function get_form_values($cart_items, $key)
+	// {
+	// 	$values = array();
+
+	// 	foreach ($cart_items as $item) {
+	// 		if ($item['name'] === $key . '[]') {
+	// 			$values[] = sanitize_text_field($item['value']);
+	// 		}
+	// 	}
+
+	// 	return $values;
+	// }
+
 	private function get_form_values($cart_items, $key)
 	{
-		$values = array();
+		$values = [];
 
 		foreach ($cart_items as $item) {
-			if ($item['name'] === $key . '[]') {
+			if (strpos($item['name'], $key) !== false) { // Handle array values properly
 				$values[] = sanitize_text_field($item['value']);
 			}
 		}
 
 		return $values;
 	}
+
 
 	/**
 	 * Helper function to get a single form value from cart items array

@@ -64,12 +64,56 @@
     $(".add-manager-btn").on("click", addManager);
     $(document).on("click", ".remove-manager-btn", removeManager);
 
-    // Pricing controls
-    $('input[name="filing_option"]').on("change", updateOrderSummary);
-    $('input[name="addon_selection"]').on("change", updateOrderSummary);
+    // Filling option controls
+    $('input[name="filing_option"]').on("change", showHideAddons);
+
+    $('input[name="filing_option"]').on("change", function () {
+      // Reset all parent radios (premium_addon, gold_addon, basic_addon)
+      $(
+        'input[name="premium_addon"], input[name="gold_addon"], input[name="basic_addon"]'
+      ).prop("checked", false);
+
+      updateOrderSummary(); // Recalculate total after reset
+    });
+
+    // Update total when any addon changes
+    $(
+      'input[name="addon_selection[]"], input[name="premium_addon"], input[name="gold_addon"], input[name="basic_addon"]'
+    ).on("change", updateOrderSummary);
+
+    updateOrderSummary();
 
     // Form submission
     $("#accordion-checkout-form").on("submit", handleFormSubmit);
+
+    // Filling option show or hide
+    function showHideAddons() {
+      let filingOptions = document.querySelectorAll(
+        "input[name='filing_option']"
+      );
+      let addonContainers = {
+        basic: document.getElementById("basic-addons"),
+        gold: document.getElementById("gold-addons"),
+        premium: document.getElementById("premium-addons"),
+      };
+
+      let selectedOption = document.querySelector(
+        "input[name='filing_option']:checked"
+      ).value;
+
+      // Hide all addon containers
+      Object.values(addonContainers).forEach((container) => {
+        if (container) container.style.display = "none";
+      });
+
+      // Show only the selected addon container
+      if (addonContainers[selectedOption]) {
+        addonContainers[selectedOption].style.display = "block";
+      }
+
+      // Update Order Summary (if needed)
+      updateOrderSummary();
+    }
 
     // Helper functions
     function addCompany() {
@@ -125,10 +169,10 @@
     }
 
     function removeMember() {
-      if ($(".member-entry").length > 1) {
-        $(this).closest(".member-entry").remove();
+      if ($(".member-entry").length > 1 || $(".manager-entry").length > 0) {
+        $(event.target).closest(".member-entry").remove();
       } else {
-        alert("At least one member is required.");
+        alert("You must have at least one member or one manager.");
       }
     }
 
@@ -148,40 +192,37 @@
     }
 
     function removeManager() {
-      if ($(".manager-entry").length > 1) {
-        $(this).closest(".manager-entry").remove();
+      if ($(".manager-entry").length > 1 || $(".member-entry").length > 0) {
+        $(event.target).closest(".manager-entry").remove();
       } else {
-        alert("At least one manager is required.");
+        alert("You must have at least one member or one manager.");
       }
     }
 
     function updateOrderSummary() {
-      orderTotal = productPrice || 99.0; // Use product price if available
+      let orderTotal = 0; // Start from zero
 
-      // Update filing option price
-      const filingOption = $('input[name="filing_option"]:checked').val();
-      if (filingOption === "gold") orderTotal = 199.0;
-      if (filingOption === "premium") orderTotal = 299.0;
+      $(".summary-item").remove(); // Clear previous summary
 
-      // Handle addons
-      $(".summary-item.addon-item").remove();
-      const $selectedAddon = $('input[name="addon_selection"]:checked');
-
-      if ($selectedAddon.length) {
-        const addonPrice = Number.parseFloat($selectedAddon.data("price"));
+      // Handle Addons (checkboxes and radios)
+      $(
+        'input[name="addon_selection[]"]:checked, input[name="premium_addon"]:checked, input[name="gold_addon"]:checked, input[name="basic_addon"]:checked'
+      ).each(function () {
+        const addonPrice = parseFloat($(this).data("price")) || 0;
         orderTotal += addonPrice;
 
         $(".summary-items").append(`
-			<div class="summary-item addon-item">
-			  <span class="item-name">${$selectedAddon
-          .closest(".addon-option")
-          .find("h3")
-          .text()}</span>
-			  <span class="item-price">$${addonPrice.toFixed(2)}</span>
-			</div>
-		  `);
-      }
+              <div class="summary-item addon-item">
+                  <span class="item-name">${$(this)
+                    .closest(".addon-option")
+                    .find("h3")
+                    .text()}</span>
+                  <span class="item-price">$${addonPrice.toFixed(2)}</span>
+              </div>
+          `);
+      });
 
+      // Update total price display
       $("#order-total").text(`$${orderTotal.toFixed(2)}`);
     }
 
@@ -273,63 +314,67 @@
           });
           break;
 
-        case 3:
-          const isMember = $("#management-type").val() === "member";
-          const selectorPrefix = isMember ? "member" : "manager";
+        case 8:
+          const memberCount = $(".member-entry").length;
+          const managerCount = $(".manager-entry").length;
+
+          // Step 1: Ensure at least one member or manager exists
+          if (memberCount === 0 && managerCount === 0) {
+            isValid = false;
+            errorMessage = "You must add at least one member or one manager.";
+            break; // Stop further validation if none exists
+          }
+
+          // Step 2: Validate names for members and managers
           let hasValidEntry = false;
 
-          $(`.${selectorPrefix}-entry`).each(function () {
-            const $name = $(this).find(
-              `input[name="${selectorPrefix}_name[]"]`
-            );
-            const $email = $(this).find(
-              `input[name="${selectorPrefix}_email[]"]`
-            );
-            let valid = true;
-
+          $(".member-entry").each(function () {
+            const $name = $(this).find('input[name="member_name[]"]');
             if (!$name.val().trim()) {
               $name.addClass("error");
-              valid = false;
+              isValid = false;
             } else {
               $name.removeClass("error");
+              hasValidEntry = true;
             }
+          });
 
-            if (!$email.val().trim() || !isValidEmail($email.val())) {
-              $email.addClass("error");
-              valid = false;
-              errorMessage = "Valid email is required.";
+          $(".manager-entry").each(function () {
+            const $name = $(this).find('input[name="manager_name[]"]');
+            if (!$name.val().trim()) {
+              $name.addClass("error");
+              isValid = false;
             } else {
-              $email.removeClass("error");
+              $name.removeClass("error");
+              hasValidEntry = true;
             }
-
-            if (valid) hasValidEntry = true;
           });
 
           if (!hasValidEntry) {
             isValid = false;
-            errorMessage = `At least one valid ${
-              isMember ? "member" : "manager"
-            } is required.`;
+            errorMessage =
+              "At least one member or manager must have a valid name.";
           }
           break;
 
         case 5:
-          if (!$('input[name="addon_selection"]:checked').length) {
+          const $addonSection = $(".business-addons");
+          const $addonsChecked = $('input[name="addon_selection[]"]:checked');
+          console.log($addonsChecked);
+          
+
+          if (!$addonsChecked.length) {
             isValid = false;
-            errorMessage = "Please select a business addon.";
-            $(".business-addons").addClass("error");
+            errorMessage = "Please select at least one business addon.";
+            $addonSection.addClass("error"); // Add error styling
           } else {
-            $(".business-addons").removeClass("error");
+            $addonSection.removeClass("error"); // Remove error styling if valid
           }
           break;
       }
 
       if (!isValid && errorMessage) alert(errorMessage);
       return isValid;
-    }
-
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
   });
 })(jQuery);

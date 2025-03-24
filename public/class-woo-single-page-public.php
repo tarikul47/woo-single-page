@@ -107,53 +107,30 @@ class Woo_Single_Page_Public
 				);
 			}
 
-			// Add management type
-			if (!empty($custom_data['management_type'])) {
-				$item_data[] = array(
-					'key' => 'Management Type',
-					'value' => ucfirst($custom_data['management_type']),
-				);
-
-				// Add member or manager information
-				if ($custom_data['management_type'] === 'member' && !empty($custom_data['members'])) {
-					for ($i = 0; $i < count($custom_data['members']['names']); $i++) {
-						if (!empty($custom_data['members']['names'][$i])) {
-							$member_info = 'Name: ' . $custom_data['members']['names'][$i];
-
-							if (!empty($custom_data['members']['emails'][$i])) {
-								$member_info .= ', Email: ' . $custom_data['members']['emails'][$i];
-							}
-
-							if (!empty($custom_data['members']['phones'][$i])) {
-								$member_info .= ', Phone: ' . $custom_data['members']['phones'][$i];
-							}
-
-							$item_data[] = array(
-								'key' => 'Member ' . ($i + 1),
-								'value' => $member_info,
-							);
-						}
-					}
-				} elseif ($custom_data['management_type'] === 'manager' && !empty($custom_data['managers'])) {
-					for ($i = 0; $i < count($custom_data['managers']['names']); $i++) {
-						if (!empty($custom_data['managers']['names'][$i])) {
-							$manager_info = 'Name: ' . $custom_data['managers']['names'][$i];
-
-							if (!empty($custom_data['managers']['emails'][$i])) {
-								$manager_info .= ', Email: ' . $custom_data['managers']['emails'][$i];
-							}
-
-							if (!empty($custom_data['managers']['phones'][$i])) {
-								$manager_info .= ', Phone: ' . $custom_data['managers']['phones'][$i];
-							}
-
-							$item_data[] = array(
-								'key' => 'Manager ' . ($i + 1),
-								'value' => $manager_info,
-							);
-						}
-					}
+			// Format Members
+			if (!empty($custom_data['members'])) {
+				$members_list = '';
+				foreach ($custom_data['members'] as $index => $member) {
+					$members_list .= ($index + 1) . '. ' . esc_html($member) . ' <br>';
 				}
+
+				$item_data[] = array(
+					'key' => 'Members',
+					'value' => trim($members_list), // Convert new lines to <br>
+				);
+			}
+
+			// Format Managers
+			if (!empty($custom_data['managers'])) {
+				$managers_list = '';
+				foreach ($custom_data['managers'] as $index => $manager) {
+					$managers_list .= ($index + 1) . '. ' . esc_html($manager) . ' <br>';
+				}
+
+				$item_data[] = array(
+					'key' => 'Managers',
+					'value' => trim($managers_list), // Convert new lines to <br>
+				);
 			}
 
 			// Add filing option

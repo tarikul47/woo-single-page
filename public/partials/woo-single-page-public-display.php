@@ -145,6 +145,7 @@ $product_price = $product->get_price();
                         <h2>Filing Options</h2>
                         <span class="toggle-icon"></span>
                     </div>
+
                     <div class="section-content">
                         <div class="filing-options">
                             <div class="filing-option">
@@ -152,27 +153,85 @@ $product_price = $product->get_price();
                                     required>
                                 <label for="filing-basic">
                                     <h3>Basic</h3>
-                                    <p>Standard filing service</p>
-                                    <span class="price">$99</span>
                                 </label>
                             </div>
                             <div class="filing-option">
                                 <input type="radio" id="filing-gold" name="filing_option" value="gold" required>
                                 <label for="filing-gold">
                                     <h3>Gold</h3>
-                                    <p>Premium filing service with additional benefits</p>
-                                    <span class="price">$199</span>
                                 </label>
                             </div>
                             <div class="filing-option">
                                 <input type="radio" id="filing-premium" name="filing_option" value="premium" required>
                                 <label for="filing-premium">
                                     <h3>Amazon Premium</h3>
-                                    <p>Complete filing service with all features</p>
-                                    <span class="price">$299</span>
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Basic Package Addons -->
+                        <div class="addon-container" id="basic-addons">
+                            <h4>Choose an Addon for Basic Package</h4>
+                            <div class="addon-option">
+                                <input type="radio" id="basic-website" name="basic_addon" value="website_setup"
+                                    data-price="100.00">
+                                <label for="basic-website">
+                                    <h3>Basic Website Setup</h3>
+                                    <span class="price">$100.00</span>
+                                </label>
+                            </div>
+                            <div class="addon-option">
+                                <input type="radio" id="basic-consulting" name="basic_addon" value="business_consulting"
+                                    data-price="150.00">
+                                <label for="basic-consulting">
+                                    <h3>Business Consulting (1-hour session)</h3>
+                                    <span class="price">$150.00</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Gold Package Addons -->
+                        <div class="addon-container" id="gold-addons" style="display: none;">
+                            <h4>Choose an Addon for Gold Package</h4>
+                            <div class="addon-option">
+                                <input type="radio" id="gold-branding" name="gold_addon" value="branding_kit"
+                                    data-price="200.00">
+                                <label for="gold-branding">
+                                    <h3>Complete Branding Kit</h3>
+                                    <span class="price">$200.00</span>
+                                </label>
+                            </div>
+                            <div class="addon-option">
+                                <input type="radio" id="gold-marketing" name="gold_addon" value="marketing_boost"
+                                    data-price="250.00">
+                                <label for="gold-marketing">
+                                    <h3>Marketing Boost Package</h3>
+                                    <span class="price">$250.00</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Premium Package Addons -->
+                        <div class="addon-container" id="premium-addons" style="display: none;">
+                            <h4>Choose an Addon for Premium Package</h4>
+                            <div class="addon-option">
+                                <input type="radio" id="premium-ads" name="premium_addon" value="social_ads"
+                                    data-price="300.00">
+                                <label for="premium-ads">
+                                    <h3>Social Media Ad Campaign</h3>
+                                    <span class="price">$300.00</span>
+                                </label>
+                            </div>
+                            <div class="addon-option">
+                                <input type="radio" id="premium-support" name="premium_addon" value="priority_support"
+                                    data-price="350.00">
+                                <label for="premium-support">
+                                    <h3>24/7 Priority Support</h3>
+                                    <span class="price">$350.00</span>
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="section-navigation">
                             <button type="button" class="continue-btn" data-next="5">Continue</button>
                         </div>
@@ -190,47 +249,42 @@ $product_price = $product->get_price();
                         <div class="business-addons">
                             <p><strong>Please select at least one addon <span class="required">*</span></strong></p>
                             <div class="addon-option">
-                                <input type="radio" id="addon-presence" name="addon_selection" value="business_presence"
-                                    data-price="50.00" required>
+                                <input type="checkbox" id="addon-presence" name="addon_selection[]"
+                                    value="business_presence" data-price="50.00">
                                 <label for="addon-presence">
                                     <h3>Texas Business Presence Package</h3>
-                                    <p>Website and phone number for your business</p>
                                     <span class="price">$50.00</span>
                                 </label>
                             </div>
                             <div class="addon-option">
-                                <input type="radio" id="addon-corporate" name="addon_selection"
-                                    value="corporate_supplies" data-price="75.00" required>
+                                <input type="checkbox" id="addon-corporate" name="addon_selection[]"
+                                    value="corporate_supplies" data-price="75.00">
                                 <label for="addon-corporate">
                                     <h3>Corporate Supplies</h3>
-                                    <p>Corporate seal, stock certificates, and more</p>
                                     <span class="price">$75.00</span>
                                 </label>
                             </div>
                             <div class="addon-option">
-                                <input type="radio" id="addon-s-corp" name="addon_selection" value="s_corporation"
-                                    data-price="100.00" required>
+                                <input type="checkbox" id="addon-s-corp" name="addon_selection[]" value="s_corporation"
+                                    data-price="100.00">
                                 <label for="addon-s-corp">
                                     <h3>S Corporation</h3>
-                                    <p>S Corporation filing with the IRS</p>
                                     <span class="price">$100.00</span>
                                 </label>
                             </div>
                             <div class="addon-option">
-                                <input type="radio" id="addon-ein" name="addon_selection" value="ein" data-price="50.00"
-                                    required>
+                                <input type="checkbox" id="addon-ein" name="addon_selection[]" value="ein"
+                                    data-price="50.00">
                                 <label for="addon-ein">
                                     <h3>Tax ID / EIN</h3>
-                                    <p>Federal Tax ID Number</p>
                                     <span class="price">$50.00</span>
                                 </label>
                             </div>
                             <div class="addon-option">
-                                <input type="radio" id="addon-tradename" name="addon_selection" value="trade_name"
-                                    data-price="100.00" required>
+                                <input type="checkbox" id="addon-tradename" name="addon_selection[]" value="trade_name"
+                                    data-price="100.00">
                                 <label for="addon-tradename">
                                     <h3>Trade Name (DBA)</h3>
-                                    <p>Register a "Doing Business As" name</p>
                                     <span class="price">$100.00</span>
                                 </label>
                             </div>
@@ -240,16 +294,13 @@ $product_price = $product->get_price();
                         </div>
                     </div>
                 </div>
+
             </form>
         </div>
 
         <div class="order-summary">
             <h2>Order Summary</h2>
             <div class="summary-items">
-                <div class="summary-item">
-                    <span class="item-name"><?php echo esc_html($product_name); ?></span>
-                    <span class="item-price"><?php echo wc_price($product_price); ?></span>
-                </div>
                 <div class="summary-item filing-option-item" id="filing-option-summary" style="display: none;">
                     <span class="item-name">Filing Option: <span id="filing-option-name"></span></span>
                     <span class="item-price" id="filing-option-price"></span>

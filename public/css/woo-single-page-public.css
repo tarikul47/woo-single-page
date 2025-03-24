@@ -318,6 +318,11 @@ select.error {
     position: relative;
 }
 
+.addon-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+}
+
 .addon-option input[type="radio"] {
     position: absolute;
     opacity: 0;
@@ -326,7 +331,7 @@ select.error {
 .addon-option label {
     display: block;
     background-color: #f9f9f9;
-    padding: 15px;
+    padding: 5px;
     border-radius: 5px;
     border: 2px solid #ddd;
     cursor: pointer;
@@ -358,6 +363,28 @@ select.error {
 }
 
 .addon-option input[type="radio"]:checked+label:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #004165;
+}
+
+.addon-option input[type="checkbox"]:checked+label {
+    border-color: #004165;
+    background-color: #e6f7ff;
+}
+
+.addon-option input[type="checkbox"]:checked+label:before {
+    background-color: white;
+    border-color: #004165;
+}
+
+.addon-option input[type="checkbox"]:checked+label:after {
     content: "";
     position: absolute;
     left: 20px;
