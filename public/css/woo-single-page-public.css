@@ -617,6 +617,11 @@ select.error {
 }
 
 
+body.specific-product-in-cart .woocommerce-checkout-review-order-table th.product-total,
+body.specific-product-in-cart .woocommerce-checkout-review-order-table td.product-total {
+    display: none !important;
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {

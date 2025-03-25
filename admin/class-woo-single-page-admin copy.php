@@ -72,8 +72,6 @@ class Woo_Single_Page_Admin
 
 		// Get form data
 		$cart_items = isset($_POST['cart_items']) ? $_POST['cart_items'] : array();
-		$order_summary = isset($_POST['order_summary']) ? $_POST['order_summary'] : array();
-		$total_price = isset($_POST['total_price']) ? $_POST['total_price'] : array();
 
 		// Get product ID
 		$product_id = 0;
@@ -135,8 +133,6 @@ class Woo_Single_Page_Admin
 
 		//error_log('member_names items: ' . print_r($member_names, true));
 		error_log('manager_names items: ' . print_r($cart_items, true));
-		error_log('order_summary items: ' . print_r($order_summary, true));
-		error_log('total_price items: ' . print_r($total_price, true));
 
 		// Validate addon selection
 		$addon_selection = $this->get_form_value($cart_items, 'addon_selection[]');
@@ -186,8 +182,7 @@ class Woo_Single_Page_Admin
 			'addon_selection' => $addon_selection,
 			'base_price' => $base_price,
 			'addon_price' => $addon_price,
-			'total_price' => $total_price,
-			'order_summary' => $order_summary,
+			'total_price' => $total_price
 		);
 
 		// Add members if available

@@ -248,54 +248,6 @@
       if (allValid) submitForm();
     }
 
-    // function submitForm() {
-    //   const formData = $("#accordion-checkout-form").serializeArray();
-    //   const cartData = formData.filter((item) => item.value);
-
-    //   // Add product ID if missing
-    //   if (
-    //     wc_add_to_cart_params?.product_id &&
-    //     !formData.some((item) => item.name === "product_id")
-    //   ) {
-    //     cartData.push({
-    //       name: "product_id",
-    //       value: wc_add_to_cart_params.product_id,
-    //     });
-    //   }
-
-    //   $.ajax({
-    //     type: "POST",
-    //     url: wc_add_to_cart_params?.ajax_url || "/wp-admin/admin-ajax.php",
-    //     data: {
-    //       action: "custom_add_to_cart",
-    //       cart_items: cartData,
-    //       security: $("#custom_form_nonce").val(),
-    //     },
-    //     beforeSend: () => {
-    //       $("#submit-button").prop("disabled", true).text("Processing...");
-    //     },
-    //     success: (response) => {
-    //       if (response.success) {
-    //         window.location.href =
-    //           response.data?.redirect ||
-    //           wc_add_to_cart_params?.checkout_url ||
-    //           "/cart/";
-    //       } else {
-    //         alert(
-    //           response.data?.message ||
-    //             "Error adding to cart. Please try again."
-    //         );
-    //       }
-    //     },
-    //     error: () => {
-    //       alert("An error occurred. Please try again.");
-    //     },
-    //     complete: () => {
-    //       $("#submit-button").prop("disabled", false).text("Submit Order");
-    //     },
-    //   });
-    // }
-
     function submitForm() {
       const formData = $("#accordion-checkout-form").serializeArray();
       const cartData = formData.filter((item) => item.value);
@@ -364,6 +316,54 @@
         },
       });
     }
+
+    // function submitForm() {
+    //   const formData = $("#accordion-checkout-form").serializeArray();
+    //   const cartData = formData.filter((item) => item.value);
+
+    //   // Add product ID if missing
+    //   if (
+    //     wc_add_to_cart_params?.product_id &&
+    //     !formData.some((item) => item.name === "product_id")
+    //   ) {
+    //     cartData.push({
+    //       name: "product_id",
+    //       value: wc_add_to_cart_params.product_id,
+    //     });
+    //   }
+
+    //   $.ajax({
+    //     type: "POST",
+    //     url: wc_add_to_cart_params?.ajax_url || "/wp-admin/admin-ajax.php",
+    //     data: {
+    //       action: "custom_add_to_cart",
+    //       cart_items: cartData,
+    //       security: $("#custom_form_nonce").val(),
+    //     },
+    //     beforeSend: () => {
+    //       $("#submit-button").prop("disabled", true).text("Processing...");
+    //     },
+    //     success: (response) => {
+    //       if (response.success) {
+    //         window.location.href =
+    //           response.data?.redirect ||
+    //           wc_add_to_cart_params?.checkout_url ||
+    //           "/cart/";
+    //       } else {
+    //         alert(
+    //           response.data?.message ||
+    //             "Error adding to cart. Please try again."
+    //         );
+    //       }
+    //     },
+    //     error: () => {
+    //       alert("An error occurred. Please try again.");
+    //     },
+    //     complete: () => {
+    //       $("#submit-button").prop("disabled", false).text("Submit Order");
+    //     },
+    //   });
+    // }
 
     function validateSection(sectionId) {
       let isValid = true;

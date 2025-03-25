@@ -133,60 +133,90 @@ class Woo_Single_Page_Public
 				);
 			}
 
-			// Add filing option
-			if (!empty($custom_data['filing_option'])) {
-				$filing_options = array(
-					'basic' => 'Basic ($99)',
-					'gold' => 'Gold ($199)',
-					'premium' => 'Premium ($299)',
-				);
+			// Display Order Summary Items
+			// if (!empty($custom_data['order_summary'])) {
+			// 	foreach ($custom_data['order_summary'] as $addon) {
+			// 		$item_data[] = array(
+			// 			'name' => $addon['name'],
+			// 			'value' => wc_price($addon['price']),
+			// 		);
+			// 	}
+			// }
 
-				$item_data[] = array(
-					'key' => 'Filing Option',
-					'value' => isset($filing_options[$custom_data['filing_option']]) ? $filing_options[$custom_data['filing_option']] : ucfirst($custom_data['filing_option']),
-				);
-			}
+			// Add filing option
+			// if (!empty($custom_data['filing_option'])) {
+			// 	$filing_options = array(
+			// 		'basic' => 'Basic ($99)',
+			// 		'gold' => 'Gold ($199)',
+			// 		'premium' => 'Premium ($299)',
+			// 	);
+
+			// 	$item_data[] = array(
+			// 		'key' => 'Filing Option',
+			// 		'value' => isset($filing_options[$custom_data['filing_option']]) ? $filing_options[$custom_data['filing_option']] : ucfirst($custom_data['filing_option']),
+			// 	);
+			// }
 
 			// Add addon selection
-			if (!empty($custom_data['addon_selection'])) {
-				$addon_options = array(
-					'business_presence' => 'Texas Business Presence Package ($50)',
-					'corporate_supplies' => 'Corporate Supplies ($75)',
-					's_corporation' => 'S Corporation ($100)',
-					'ein' => 'Tax ID / EIN ($50)',
-					'trade_name' => 'Trade Name (DBA) ($100)',
-				);
+			// if (!empty($custom_data['addon_selection'])) {
+			// 	$addon_options = array(
+			// 		'business_presence' => 'Texas Business Presence Package ($50)',
+			// 		'corporate_supplies' => 'Corporate Supplies ($75)',
+			// 		's_corporation' => 'S Corporation ($100)',
+			// 		'ein' => 'Tax ID / EIN ($50)',
+			// 		'trade_name' => 'Trade Name (DBA) ($100)',
+			// 	);
 
-				$item_data[] = array(
-					'key' => 'Addon',
-					'value' => isset($addon_options[$custom_data['addon_selection']]) ? $addon_options[$custom_data['addon_selection']] : ucfirst(str_replace('_', ' ', $custom_data['addon_selection'])),
-				);
-			}
+			// 	$item_data[] = array(
+			// 		'key' => 'Addon',
+			// 		'value' => isset($addon_options[$custom_data['addon_selection']]) ? $addon_options[$custom_data['addon_selection']] : ucfirst(str_replace('_', ' ', $custom_data['addon_selection'])),
+			// 	);
+			// }
 
 			// Add price details
-			if (isset($custom_data['base_price'])) {
-				$item_data[] = array(
-					'key' => 'Base Price',
-					'value' => wc_price($custom_data['base_price']),
-				);
-			}
+			// if (isset($custom_data['base_price'])) {
+			// 	$item_data[] = array(
+			// 		'key' => 'Base Price',
+			// 		'value' => wc_price($custom_data['base_price']),
+			// 	);
+			// }
 
-			if (isset($custom_data['addon_price'])) {
-				$item_data[] = array(
-					'key' => 'Addon Price',
-					'value' => wc_price($custom_data['addon_price']),
-				);
-			}
+			// if (isset($custom_data['addon_price'])) {
+			// 	$item_data[] = array(
+			// 		'key' => 'Addon Price',
+			// 		'value' => wc_price($custom_data['addon_price']),
+			// 	);
+			// }
 
-			if (isset($custom_data['total_price'])) {
-				$item_data[] = array(
-					'key' => 'Total Custom Price',
-					'value' => wc_price($custom_data['total_price']),
-				);
-			}
+			// if (isset($custom_data['total_price'])) {
+			// 	$item_data[] = array(
+			// 		'key' => 'Total Custom Price',
+			// 		'value' => wc_price($custom_data['total_price']),
+			// 	);
+			// }
 		}
 
 		return $item_data;
+	}
+
+	/**
+	 * Fee added 
+	 */
+
+	public function wsp_woocommerce_cart_calculate_fees($cart)
+	{
+		foreach (WC()->cart->get_cart() as $cart_item) {
+			if (isset($cart_item['custom_data']['order_summary']) && is_array($cart_item['custom_data']['order_summary'])) {
+				foreach ($cart_item['custom_data']['order_summary'] as $addon) {
+					if (!empty($addon['name']) && isset($addon['price']) && is_numeric($addon['price'])) {
+						WC()->cart->add_fee(esc_html($addon['name']), floatval($addon['price']));
+					}
+				}
+			}
+		}
+
+		// Subtract base product price ($1) to balance the total
+		$cart->add_fee('Base Product Discount', -1, false);
 	}
 
 	/**
@@ -353,6 +383,51 @@ class Woo_Single_Page_Public
 						}
 					});
 				});
+			</script>
+			<?php
+		}
+
+		?>
+
+		<style>
+			body.specific-product-in-cart .woocommerce-checkout-review-order-table th.product-total,
+			body.specific-product-in-cart .woocommerce-checkout-review-order-table td.product-total,
+			body.specific-product-in-cart .woocommerce-checkout-review-order-table tr.cart-subtotal,
+			{
+			display: none !important;
+			}
+		</style>
+
+		<?php
+
+		if (is_checkout()) {
+			?>
+			<script>
+				(function ($) {
+					// Function to hide the fee
+					function hideFee() {
+						if ($('body').hasClass('specific-product-in-cart')) {
+							// Target the order-total row
+							var $orderTotal = $('tr.order-total');
+							// Get the immediate previous row (the fee)
+							var $previousRow = $orderTotal.prev('tr.fee');
+							if ($previousRow.length) {
+								$previousRow.hide();
+							}
+						}
+					}
+
+					// Run on initial page load
+					hideFee();
+
+					// Re-run when checkout updates (AJAX)
+					$(document).on('updated_checkout', function () {
+						hideFee();
+					});
+
+					// Optional: Add a slight delay for edge cases
+					setTimeout(hideFee, 100);
+				})(jQuery);
 			</script>
 			<?php
 		}

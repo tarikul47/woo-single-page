@@ -198,6 +198,8 @@ class Woo_Single_Page
 		// Display custom data in order emails
 		$this->loader->add_action('woocommerce_email_order_details', $plugin_public, 'wsp_woocommerce_email_order_details', 10, 4);
 
+		$this->loader->add_action('woocommerce_cart_calculate_fees', $plugin_public, 'wsp_woocommerce_cart_calculate_fees');
+
 		// custom css product id for single product page to show custom design 
 		$this->loader->add_action('wp_footer', $plugin_public, 'wsp_custom_enqueue_scripts');
 
