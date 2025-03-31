@@ -172,21 +172,23 @@ $product_price = $product->get_price();
                         <!-- Basic Package Addons -->
                         <div class="addon-container" id="basic-addons">
                             <h4>Choose an Addon for Basic Package</h4>
-                            <div class="addon-option">
-                                <input type="radio" id="basic-website" name="basic_addon" value="website_setup"
-                                    data-price="100.00">
-                                <label for="basic-website">
-                                    <h3>Basic Website Setup</h3>
-                                    <span class="price">$100.00</span>
-                                </label>
-                            </div>
-                            <div class="addon-option">
-                                <input type="radio" id="basic-consulting" name="basic_addon" value="business_consulting"
-                                    data-price="150.00">
-                                <label for="basic-consulting">
-                                    <h3>Business Consulting (1-hour session)</h3>
-                                    <span class="price">$150.00</span>
-                                </label>
+                            <div class="addons">
+                                <div class="addon-option">
+                                    <input type="radio" id="basic-website" name="basic_addon" value="website_setup"
+                                        data-price="100.00">
+                                    <label for="basic-website">
+                                        <h3>Basic Website Setup</h3>
+                                        <span class="price">$100.00</span>
+                                    </label>
+                                </div>
+                                <div class="addon-option">
+                                    <input type="radio" id="basic-consulting" name="basic_addon"
+                                        value="business_consulting" data-price="150.00">
+                                    <label for="basic-consulting">
+                                        <h3>Business Consulting (1-hour session)</h3>
+                                        <span class="price">$150.00</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

@@ -200,9 +200,19 @@ class Woo_Single_Page
 
 		$this->loader->add_action('woocommerce_cart_calculate_fees', $plugin_public, 'wsp_woocommerce_cart_calculate_fees');
 
+		$this->loader->add_filter('body_class', $plugin_public, 'wsp_add_specific_product_body_class');
+
+		$this->loader->add_filter('woocommerce_locate_template', $plugin_public, 'wsp_woocommerce_locate_template', 20, 3);
+
 		// custom css product id for single product page to show custom design 
 		$this->loader->add_action('wp_footer', $plugin_public, 'wsp_custom_enqueue_scripts');
 
+		// Checkout page discount type product remove
+		$this->loader->add_action('woocommerce_checkout_create_order_fee_item', $plugin_public, 'wsp_woocommerce_checkout_create_order_fee_item', 10, 4);
+		$this->loader->add_filter('woocommerce_order_get_items', $plugin_public, 'wsp_woocommerce_order_get_items', 10, 2);
+
+		//admin order age remove 
+		$this->loader->add_action('admin_footer', $plugin_public, 'wsp_admin_footer');
 
 	}
 

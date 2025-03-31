@@ -132,68 +132,6 @@ class Woo_Single_Page_Public
 					'value' => trim($managers_list), // Convert new lines to <br>
 				);
 			}
-
-			// Display Order Summary Items
-			// if (!empty($custom_data['order_summary'])) {
-			// 	foreach ($custom_data['order_summary'] as $addon) {
-			// 		$item_data[] = array(
-			// 			'name' => $addon['name'],
-			// 			'value' => wc_price($addon['price']),
-			// 		);
-			// 	}
-			// }
-
-			// Add filing option
-			// if (!empty($custom_data['filing_option'])) {
-			// 	$filing_options = array(
-			// 		'basic' => 'Basic ($99)',
-			// 		'gold' => 'Gold ($199)',
-			// 		'premium' => 'Premium ($299)',
-			// 	);
-
-			// 	$item_data[] = array(
-			// 		'key' => 'Filing Option',
-			// 		'value' => isset($filing_options[$custom_data['filing_option']]) ? $filing_options[$custom_data['filing_option']] : ucfirst($custom_data['filing_option']),
-			// 	);
-			// }
-
-			// Add addon selection
-			// if (!empty($custom_data['addon_selection'])) {
-			// 	$addon_options = array(
-			// 		'business_presence' => 'Texas Business Presence Package ($50)',
-			// 		'corporate_supplies' => 'Corporate Supplies ($75)',
-			// 		's_corporation' => 'S Corporation ($100)',
-			// 		'ein' => 'Tax ID / EIN ($50)',
-			// 		'trade_name' => 'Trade Name (DBA) ($100)',
-			// 	);
-
-			// 	$item_data[] = array(
-			// 		'key' => 'Addon',
-			// 		'value' => isset($addon_options[$custom_data['addon_selection']]) ? $addon_options[$custom_data['addon_selection']] : ucfirst(str_replace('_', ' ', $custom_data['addon_selection'])),
-			// 	);
-			// }
-
-			// Add price details
-			// if (isset($custom_data['base_price'])) {
-			// 	$item_data[] = array(
-			// 		'key' => 'Base Price',
-			// 		'value' => wc_price($custom_data['base_price']),
-			// 	);
-			// }
-
-			// if (isset($custom_data['addon_price'])) {
-			// 	$item_data[] = array(
-			// 		'key' => 'Addon Price',
-			// 		'value' => wc_price($custom_data['addon_price']),
-			// 	);
-			// }
-
-			// if (isset($custom_data['total_price'])) {
-			// 	$item_data[] = array(
-			// 		'key' => 'Total Custom Price',
-			// 		'value' => wc_price($custom_data['total_price']),
-			// 	);
-			// }
 		}
 
 		return $item_data;
@@ -222,103 +160,34 @@ class Woo_Single_Page_Public
 	/**
 	 * Save custom data to order
 	 */
+
 	public function wsp_woocommerce_checkout_create_order_line_item($item, $cart_item_key, $values, $order)
 	{
 		if (isset($values['custom_data'])) {
 			$custom_data = $values['custom_data'];
 
-			// Save company names
 			if (!empty($custom_data['company_names'])) {
-				$item->add_meta_data('Companies', implode(', ', $custom_data['company_names']));
+				$item->add_meta_data('Companies', implode(', ', $custom_data['company_names']), true);
 			}
 
-			// Save business type
 			if (!empty($custom_data['business_type'])) {
-				$item->add_meta_data('Business Type', ucfirst($custom_data['business_type']));
+				$item->add_meta_data('Business Type', ucfirst($custom_data['business_type']), true);
 			}
 
-			// Save management type and related data
-			if (!empty($custom_data['management_type'])) {
-				$item->add_meta_data('Management Type', ucfirst($custom_data['management_type']));
-
-				if ($custom_data['management_type'] === 'member' && !empty($custom_data['members'])) {
-					for ($i = 0; $i < count($custom_data['members']['names']); $i++) {
-						$member_data = array();
-
-						if (!empty($custom_data['members']['names'][$i])) {
-							$member_data[] = 'Name: ' . $custom_data['members']['names'][$i];
-						}
-
-						if (!empty($custom_data['members']['emails'][$i])) {
-							$member_data[] = 'Email: ' . $custom_data['members']['emails'][$i];
-						}
-
-						if (!empty($custom_data['members']['phones'][$i])) {
-							$member_data[] = 'Phone: ' . $custom_data['members']['phones'][$i];
-						}
-
-						if (!empty($member_data)) {
-							$item->add_meta_data('Member ' . ($i + 1), implode(', ', $member_data));
-						}
-					}
-				} elseif ($custom_data['management_type'] === 'manager' && !empty($custom_data['managers'])) {
-					for ($i = 0; $i < count($custom_data['managers']['names']); $i++) {
-						$manager_data = array();
-
-						if (!empty($custom_data['managers']['names'][$i])) {
-							$manager_data[] = 'Name: ' . $custom_data['managers']['names'][$i];
-						}
-
-						if (!empty($custom_data['managers']['emails'][$i])) {
-							$manager_data[] = 'Email: ' . $custom_data['managers']['emails'][$i];
-						}
-
-						if (!empty($custom_data['managers']['phones'][$i])) {
-							$manager_data[] = 'Phone: ' . $custom_data['managers']['phones'][$i];
-						}
-
-						if (!empty($manager_data)) {
-							$item->add_meta_data('Manager ' . ($i + 1), implode(', ', $manager_data));
-						}
-					}
+			if (!empty($custom_data['members'])) {
+				$members_list = '';
+				foreach ($custom_data['members'] as $index => $member) {
+					$members_list .= ($index + 1) . '. ' . esc_html($member);
 				}
+				$item->add_meta_data('Members', trim($members_list), true);
 			}
 
-			// Save filing option
-			if (!empty($custom_data['filing_option'])) {
-				$filing_options = array(
-					'basic' => 'Basic ($99)',
-					'gold' => 'Gold ($199)',
-					'premium' => 'Premium ($299)',
-				);
-
-				$item->add_meta_data('Filing Option', isset($filing_options[$custom_data['filing_option']]) ? $filing_options[$custom_data['filing_option']] : ucfirst($custom_data['filing_option']));
-			}
-
-			// Save addon selection
-			if (!empty($custom_data['addon_selection'])) {
-				$addon_options = array(
-					'business_presence' => 'Texas Business Presence Package ($50)',
-					'corporate_supplies' => 'Corporate Supplies ($75)',
-					's_corporation' => 'S Corporation ($100)',
-					'ein' => 'Tax ID / EIN ($50)',
-					'trade_name' => 'Trade Name (DBA) ($100)',
-				);
-
-				$item->add_meta_data('Addon', isset($addon_options[$custom_data['addon_selection']]) ? $addon_options[$custom_data['addon_selection']] : ucfirst(str_replace('_', ' ', $custom_data['addon_selection'])));
-			}
-
-			// Save price details
-			if (isset($custom_data['base_price'])) {
-				$item->add_meta_data('Base Price', wc_price($custom_data['base_price']));
-			}
-
-			if (isset($custom_data['addon_price'])) {
-				$item->add_meta_data('Addon Price', wc_price($custom_data['addon_price']));
-			}
-
-			if (isset($custom_data['total_price'])) {
-				$item->add_meta_data('Total Custom Price', wc_price($custom_data['total_price']));
+			if (!empty($custom_data['managers'])) {
+				$managers_list = '';
+				foreach ($custom_data['managers'] as $index => $manager) {
+					$managers_list .= ($index + 1) . '. ' . esc_html($manager);
+				}
+				$item->add_meta_data('Managers', trim($managers_list), true);
 			}
 		}
 	}
@@ -361,6 +230,39 @@ class Woo_Single_Page_Public
 		}
 	}
 
+	public function wsp_add_specific_product_body_class($classes)
+	{
+		if (is_checkout() && !WC()->cart->is_empty()) {
+			$specific_product_id = 104; // Replace with your product ID
+
+			foreach (WC()->cart->get_cart() as $cart_item) {
+				if ($cart_item['product_id'] == $specific_product_id) {
+					$classes[] = 'specific-product-in-cart';
+					break;
+				}
+			}
+		}
+
+		// For thank you page: Check order items
+		if (is_order_received_page()) {
+			$order_id = absint(get_query_var('order-received'));
+			$order = wc_get_order($order_id);
+			$specific_product_id = 104;
+
+			if ($order) {
+				foreach ($order->get_items() as $item) {
+					if ($item->get_product_id() == $specific_product_id) {
+						$classes[] = 'specific-product-in-cart';
+						break;
+					}
+				}
+			}
+		}
+
+
+		return $classes;
+	}
+
 	public function wsp_custom_enqueue_scripts()
 	{
 		if (is_product() && $this->product_id == get_the_ID()) {
@@ -390,19 +292,29 @@ class Woo_Single_Page_Public
 		?>
 
 		<style>
-			body.specific-product-in-cart .woocommerce-checkout-review-order-table th.product-total,
-			body.specific-product-in-cart .woocommerce-checkout-review-order-table td.product-total,
-			body.specific-product-in-cart .woocommerce-checkout-review-order-table tr.cart-subtotal,
-			{
-			display: none !important;
-			}
+			/* body.specific-product-in-cart .woocommerce-checkout-review-order-table th.product-total,
+																							body.specific-product-in-cart .woocommerce-checkout-review-order-table td.product-total,
+																							body.specific-product-in-cart .woocommerce-checkout-review-order-table tr.cart-subtotal,
+																							body.specific-product-in-cart .woocommerce-order-details .tp-order-info-list-header h4,
+																							{
+																							display: none !important;
+																							}
+
+																							body.specific-product-in-cart table.woocommerce-checkout-review-order-table tbody td,
+																							body.specific-product-in-cart table.woocommerce-checkout-review-order-table tfoot tr th {
+																								text-align: left !important;
+																							}
+
+																							body.specific-product-in-cart .tp-order-info-list ul li.tp-order-info-list-header:last-child {
+																								display: none !important;
+																							} */
 		</style>
 
 		<?php
 
 		if (is_checkout()) {
 			?>
-			<script>
+			<!-- <script>
 				(function ($) {
 					// Function to hide the fee
 					function hideFee() {
@@ -428,6 +340,135 @@ class Woo_Single_Page_Public
 					// Optional: Add a slight delay for edge cases
 					setTimeout(hideFee, 100);
 				})(jQuery);
+			</script> -->
+			<?php
+		}
+
+	}
+
+	public function wsp_woocommerce_locate_template($template, $template_name, $template_path)
+	{
+		// Target ONLY the review-order.php template
+		if ('checkout/review-order.php' === $template_name) {
+			// Path to your plugin's template file
+			$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/checkout/review-order.php';
+
+			// Check if the file exists, then override
+			if (file_exists($plugin_template_path)) {
+				//	var_dump($plugin_template_path);
+
+				$template = $plugin_template_path;
+			}
+		}// Target ONLY the review-order.php template
+		if ('order/order-details.php' === $template_name) {
+			// 	// Path to your plugin's template file
+			$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/order/order-details.php';
+
+			// Check if the file exists, then override
+			if (file_exists($plugin_template_path)) {
+				//	var_dump($plugin_template_path);
+
+				$template = $plugin_template_path;
+			}
+		}
+
+		if ('order/order-details-item.php' === $template_name) {
+			// Path to your plugin's template file
+			$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/order/order-details-item.php';
+
+			// Check if the file exists, then override
+			if (file_exists($plugin_template_path)) {
+				//	var_dump($plugin_template_path);
+
+				$template = $plugin_template_path;
+			}
+		}
+		return $template;
+	}
+
+	public function wsp_woocommerce_checkout_create_order_fee_item($item, $fee_key, $fee, $order)
+	{
+		if (isset($fee->id)) {
+			$item->add_meta_data('_hidden_fee_id', $fee->id, true);
+		}
+	}
+
+	public function wsp_woocommerce_order_get_items($items, $order)
+	{
+		foreach ($items as $key => $item) {
+			if (
+				$item->get_type() === 'fee' &&
+				$item->get_meta('_hidden_fee_id') === 'base-product-discount'
+			) {
+				unset($items[$key]);
+			}
+		}
+		return $items;
+	}
+
+	public function wsp_admin_footer()
+	{
+
+		$screen = get_current_screen();
+
+
+		//error_log(print_r('$screen', true));
+		//error_log(print_r($screen, true));
+
+		// Ensure we are on a single order edit page
+		if (!$screen || $screen->id !== 'woocommerce_page_wc-orders') {
+			error_log('❌ Not on order edit page');
+			return;
+		}
+
+		// Fetch Order ID correctly
+		$order_id = isset($_GET['id']) ? intval($_GET['id']) : 0; // Works in edit mode
+		if (!$order_id) {
+			error_log('❌ Order ID not found');
+			return;
+		}
+
+		$order = wc_get_order($order_id);
+		if (!$order) {
+			error_log('❌ Order object not found');
+			return;
+		}
+
+		$target_product_id = 104; // Change this to your product ID
+		$product_found = false;
+
+		// Debug: Print all order items
+		foreach ($order->get_items() as $item) {
+			$product_id = $item->get_product_id();
+			error_log("🔎 Found Product ID: $product_id");
+			if ($product_id == $target_product_id) {
+				$product_found = true;
+				error_log("✅ Target product ($target_product_id) found in order!");
+				break;
+			}
+		}
+
+		// Final Debug Output
+		if (!$product_found) {
+			error_log("❌ Target product ($target_product_id) NOT found in order.");
+		}
+
+		// If product is found, inject JavaScript
+		if ($product_found) {
+			?>
+			<script>
+				jQuery(document).ready(function ($) {
+					alert('Product 104 found! Hiding elements.');
+
+					// Remove table rows data
+					$('.woocommerce_order_items .item_cost').hide();
+					$('.woocommerce_order_items .quantity').hide();
+					$('.woocommerce_order_items tbody:first .line_cost').hide();
+
+					// Remove the first row in the order totals table (Items Subtotal)
+					$('.wc-order-totals tbody tr:first').hide();
+				});
+
 			</script>
 			<?php
 		}
