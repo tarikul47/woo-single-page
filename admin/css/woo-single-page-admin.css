@@ -2,3 +2,91 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+/* Admin interface styling */
+.woocommerce_options_panel .options_group {
+    position: relative;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    margin: 20px 0;
+}
+
+.addon-entry {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.addon-entry input[type="text"],
+.addon-entry input[type="number"] {
+    flex: 1;
+    padding: 8px;
+}
+
+.button.add-addon {
+    margin-top: 10px;
+}
+
+/* Package features CSS */
+.feature-group {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.feature-entry {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+    align-items: center;
+}
+
+.feature-entry input[type="text"] {
+    flex: 1;
+    padding: 8px;
+}
+
+.button.remove-feature {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+
+/* latest CSS */
+
+/* Meta box styling */
+#custom_checkout_options .options-group,
+#package_descriptions .feature-group {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+#custom_checkout_options h3,
+#package_descriptions h3 {
+    margin: 1.5em 0 1em;
+    font-size: 14px;
+    color: #23282d;
+}
+
+.feature-entry,
+.addon-entry {
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+}
+
+.add-feature,
+.add-addon {
+    margin-top: 10px !important;
+}
+
+.remove-feature,
+.remove-addon {
+    margin-left: 10px !important;
+}

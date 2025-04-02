@@ -162,6 +162,12 @@ class Woo_Single_Page
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 
+		// In your main plugin class constructor:
+		$this->loader->add_action('add_meta_boxes', $plugin_admin, 'add_custom_meta_boxes');
+
+		// Save product data
+		$this->loader->add_action('woocommerce_process_product_meta', $plugin_admin, 'save_product_data');
+
 		// Register AJAX handler for form submission
 		$this->loader->add_action('wp_ajax_custom_add_to_cart', $plugin_admin, 'process_custom_add_to_cart');
 		$this->loader->add_action('wp_ajax_nopriv_custom_add_to_cart', $plugin_admin, 'process_custom_add_to_cart');

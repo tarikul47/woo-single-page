@@ -56,6 +56,240 @@ class Woo_Single_Page_Admin
 
 	}
 
+	private function add_feature_section($type, $label, $post)
+	{
+		echo '<div class="options_group feature-group">';
+		echo '<h3>' . esc_html($label) . '</h3>';
+
+		// Features container
+		echo '<div class="features-list" data-type="' . $type . '_features">';
+		$features = get_post_meta($post->ID, '_' . $type . '_features', true);
+
+		if (!empty($features)) {
+			foreach ($features as $index => $feature) {
+				echo '<div class="feature-entry">';
+				echo '<input type="text" name="' . $type . '_features[' . $index . '][title]" 
+                   value="' . esc_attr($feature['title']) . '" 
+                   placeholder="Feature Title">';
+				echo '<button type="button" class="button remove-feature">' . __('Remove') . '</button>';
+				echo '</div>';
+			}
+		}
+		echo '</div>';
+
+		// Add button
+		echo '<button type="button" class="button add-feature" data-type="' . $type . '_features">'
+			. __('Add Feature') . '</button>';
+		echo '</div>';
+	}
+
+	private function add_filing_options_section($type, $label, $post)
+	{
+		echo '<div class="options_group filing-options-group">';
+		echo '<h3>' . esc_html($label) . '</h3>';
+
+		// Enable option
+		// woocommerce_wp_checkbox(array(
+		// 	'id' => '_enable_' . $type . '_filing',
+		// 	'label' => __('Enable ' . $label, 'custom-product-checkout'),
+		// 	'value' => get_post_meta($post->ID, '_enable_' . $type . '_filing', true)
+		// ));
+
+		// Addons container
+		echo '<div class="' . $type . '-addons-container">';
+		$addons = get_post_meta($post->ID, '_' . $type . '_filing_addons', true);
+		echo '<div class="addons-list" data-type="' . $type . '_filing_addons">';
+		if (!empty($addons)) {
+			foreach ($addons as $index => $addon) {
+				echo '<div class="addon-entry">';
+				echo '<input type="text" name="' . $type . '_filing_addons[' . $index . '][label]" 
+					   value="' . esc_attr($addon['label']) . '" placeholder="Addon Label">';
+				echo '<input type="number" name="' . $type . '_filing_addons[' . $index . '][price]" 
+					   value="' . esc_attr($addon['price']) . '" placeholder="Price" step="0.01">';
+				echo '<button type="button" class="button remove-addon">' . __('Remove') . '</button>';
+				echo '</div>';
+			}
+		}
+		echo '</div></div>';
+
+		// Button with matching data-type
+		echo '<button type="button" class="button add-addon" data-type="' . $type . '_filing_addons">' . __('Add Addon') . '</button>';
+		echo '</div>';
+	}
+
+	private function add_business_addons_section($post)
+	{
+		echo '<div class="options_group business-addons-group">';
+		echo '<h3>' . __('Business Addons', 'custom-product-checkout') . '</h3>';
+
+		$addons = get_post_meta($post->ID, '_business_addons', true);
+		echo '<div class="addons-list" data-type="business_addons">';
+		if (!empty($addons)) {
+			foreach ($addons as $index => $addon) {
+				echo '<div class="addon-entry">';
+				echo '<input type="text" name="business_addons[' . $index . '][label]" 
+					   value="' . esc_attr($addon['label']) . '" placeholder="Addon Label">';
+				echo '<input type="number" name="business_addons[' . $index . '][price]" 
+					   value="' . esc_attr($addon['price']) . '" placeholder="Price" step="0.01">';
+				echo '<input type="hidden" name="business_addons[' . $index . '][type]" value="checkbox">';
+				echo '<button type="button" class="button remove-addon">' . __('Remove') . '</button>';
+				echo '</div>';
+			}
+		}
+		echo '</div>';
+
+		// Button with matching data-type
+		echo '<button type="button" class="button add-addon" data-type="business_addons">' . __('Add Addon') . '</button>';
+		echo '</div>';
+	}
+
+	// ---------------------------------------------
+
+	/**
+	 * Add multiple meta boxes
+	 */
+	public function add_custom_meta_boxes()
+	{
+		// Options Meta Box
+		add_meta_box(
+			'custom_checkout_options',
+			__('Custom Checkout Options', 'custom-product-checkout'),
+			array($this, 'render_options_meta_box'),
+			'product',
+			'normal',
+			'high'
+		);
+
+		// Description Meta Box
+		add_meta_box(
+			'package_descriptions',
+			__('Package Descriptions', 'custom-product-checkout'),
+			array($this, 'render_descriptions_meta_box'),
+			'product',
+			'normal',
+			'high'
+		);
+
+		// Add visibility classes to both meta boxes
+		add_filter('postbox_classes_product_custom_checkout_options', array($this, 'add_meta_box_classes'));
+		add_filter('postbox_classes_product_package_descriptions', array($this, 'add_meta_box_classes'));
+	}
+
+	/**
+	 * Add visibility classes to meta boxes
+	 */
+	public function add_meta_box_classes($classes)
+	{
+		array_push($classes, 'show_if_simple', 'show_if_variable');
+		return $classes;
+	}
+
+	/**
+	 * Render Options Meta Box
+	 */
+	public function render_options_meta_box($post)
+	{
+		wp_nonce_field('custom_checkout_meta_save', 'custom_checkout_meta_nonce');
+
+		echo '<div class="options-container">';
+
+		// Enable Checkbox
+		echo '<div class="options_group">';
+		woocommerce_wp_checkbox(array(
+			'id' => '_enable_custom_checkout',
+			'label' => __('Enable Custom Checkout Options', 'custom-product-checkout'),
+			'description' => __('Enable to show custom checkout options', 'custom-product-checkout')
+		));
+		echo '</div>';
+
+		// Filing Options
+		$this->add_filing_options_section('basic', 'Basic Options', $post);
+		$this->add_filing_options_section('gold', 'Gold Options', $post);
+		$this->add_filing_options_section('premium', 'Premium Options', $post);
+
+		// Business Addons
+		$this->add_business_addons_section($post);
+
+		echo '</div>';
+	}
+
+	/**
+	 * Render Descriptions Meta Box
+	 */
+	public function render_descriptions_meta_box($post)
+	{
+		echo '<div class="descriptions-container">';
+
+		// Feature Sections
+		$this->add_feature_section('basic', 'Basic Features', $post);
+		$this->add_feature_section('gold', 'Gold Features', $post);
+		$this->add_feature_section('premium', 'Premium Features', $post);
+
+		echo '</div>';
+	}
+
+	// -----------------------------------------------
+
+
+
+	public function save_product_data($post_id)
+	{
+		// Save enable option
+		$enable = isset($_POST['_enable_custom_checkout']) ? 'yes' : 'no';
+		update_post_meta($post_id, '_enable_custom_checkout', $enable);
+
+		// Save feature sections
+		$package_types = ['basic', 'gold', 'premium'];
+
+		foreach ($package_types as $type) {
+			if (!empty($_POST[$type . '_features'])) {
+				$features = array_map(function ($feature) {
+					return [
+						'title' => sanitize_text_field($feature['title']),
+						'value' => sanitize_title($feature['title'])
+					];
+				}, $_POST[$type . '_features']);
+				update_post_meta($post_id, '_' . $type . '_features', $features);
+			} else {
+				delete_post_meta($post_id, '_' . $type . '_features');
+			}
+		}
+
+		// Save filing options
+		$types = ['basic', 'gold', 'premium'];
+
+		foreach ($types as $type) {
+			// Save enable status
+			$enable_filing = isset($_POST['_enable_' . $type . '_filing']) ? 'yes' : 'no';
+			update_post_meta($post_id, '_enable_' . $type . '_filing', $enable_filing);
+
+			// Save addons
+			if (!empty($_POST[$type . '_filing_addons'])) {
+				$addons = array_values(array_map(function ($addon) {
+					return [
+						'label' => sanitize_text_field($addon['label']),
+						'price' => (float) $addon['price'],
+						'value' => sanitize_title($addon['label'])
+					];
+				}, $_POST[$type . '_filing_addons']));
+				update_post_meta($post_id, '_' . $type . '_filing_addons', $addons);
+			}
+		}
+
+		// Save business addons
+		if (!empty($_POST['business_addons'])) {
+			$business_addons = array_values(array_map(function ($addon) {
+				return [
+					'label' => sanitize_text_field($addon['label']),
+					'price' => (float) $addon['price'],
+					'type' => 'checkbox',
+					'value' => sanitize_title($addon['label'])
+				];
+			}, $_POST['business_addons']));
+			update_post_meta($post_id, '_business_addons', $business_addons);
+		}
+	}
+
 	/**
 	 * Process custom form submission and add to cart
 	 */
@@ -298,10 +532,17 @@ class Woo_Single_Page_Admin
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+		global $pagenow;
 
-		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/woo-single-page-admin.css', array(), $this->version, 'all');
+		if (($pagenow === 'post.php' || $pagenow === 'post-new.php') && isset($_GET['post'])) {
+			$post_type = get_post_type($_GET['post']);
+			if ($post_type === 'product') {
+				wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/woo-single-page-admin.css', array(), $this->version, 'all');
+			}
+		}
 
 	}
+
 
 	/**
 	 * Register the JavaScript for the admin area.
@@ -323,7 +564,14 @@ class Woo_Single_Page_Admin
 		 * class.
 		 */
 
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/woo-single-page-admin.js', array('jquery'), $this->version, false);
+		global $pagenow;
+
+		if (($pagenow === 'post.php' || $pagenow === 'post-new.php') && isset($_GET['post'])) {
+			$post_type = get_post_type($_GET['post']);
+			if ($post_type === 'product') {
+				wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/woo-single-page-admin.js', array('jquery'), $this->version, false);
+			}
+		}
 
 	}
 

@@ -57,9 +57,6 @@ class Woo_Single_Page_Public
 		$this->version = $version;
 
 		$this->product_id = 104;
-
-
-
 	}
 
 	// custom design show condition 
