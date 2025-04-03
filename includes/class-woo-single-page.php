@@ -202,7 +202,7 @@ class Woo_Single_Page
 		$this->loader->add_action('woocommerce_checkout_create_order_line_item', $plugin_public, 'wsp_woocommerce_checkout_create_order_line_item', 10, 4);
 
 		// Display custom data in order emails
-		$this->loader->add_action('woocommerce_email_order_details', $plugin_public, 'wsp_woocommerce_email_order_details', 10, 4);
+		//	$this->loader->add_action('woocommerce_email_order_details', $plugin_public, 'wsp_woocommerce_email_order_details', 10, 4);
 
 		$this->loader->add_action('woocommerce_cart_calculate_fees', $plugin_public, 'wsp_woocommerce_cart_calculate_fees');
 
