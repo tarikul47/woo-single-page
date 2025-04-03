@@ -150,6 +150,8 @@ class Woo_Single_Page_Public
 
 	public function wsp_woocommerce_cart_calculate_fees($cart)
 	{
+		$apply_discount = false;
+
 		foreach (WC()->cart->get_cart() as $cart_item) {
 			if (isset($cart_item['custom_data']['order_summary']) && is_array($cart_item['custom_data']['order_summary'])) {
 				foreach ($cart_item['custom_data']['order_summary'] as $addon) {
@@ -158,10 +160,18 @@ class Woo_Single_Page_Public
 					}
 				}
 			}
+
+			// Check custom meta for each product
+			$product_id = $cart_item['product_id'];
+			if (get_post_meta($product_id, '_enable_custom_checkout', true) === 'yes') {
+				$apply_discount = true;
+			}
 		}
 
-		// Subtract base product price ($1) to balance the total
-		$cart->add_fee('Base Product Discount', -1, false);
+		// Apply discount only if at least one product has the custom meta enabled
+		if ($apply_discount) {
+			$cart->add_fee('Base Product Discount', -1, false);
+		}
 	}
 
 	/**
@@ -447,6 +457,40 @@ class Woo_Single_Page_Public
 			</script>
 			<?php
 		}
+	}
+
+
+	public function wsp_custom_require_phone_for_guests($fields)
+	{
+		if (!is_user_logged_in()) {
+			$fields['billing_phone']['required'] = true;
+			$fields['billing_phone']['class'] = array('form-row-wide');
+		}
+		return $fields;
+	}
+
+	// 2. Add validation for guest checkouts
+
+
+	public function wsp_custom_validate_guest_phone()
+	{
+		if (!is_user_logged_in() && empty($_POST['billing_phone'])) {
+			wc_add_notice(__('Please enter a valid phone number - we need this to contact you about your order.', 'your-text-domain'), 'error');
+		}
+	}
+
+	// 3. (Optional) Add inline validation message
+
+	function wsp_custom_phone_field_validation($field, $key, $args, $value)
+	{
+		if (!is_user_logged_in() && $key === 'billing_phone') {
+			$field = str_replace(
+				'<input type="tel"',
+				'<input type="tel" pattern="[0-9]{10}" title="' . esc_attr__('Please enter a 10-digit phone number', 'your-text-domain') . '"',
+				$field
+			);
+		}
+		return $field;
 	}
 
 	/**

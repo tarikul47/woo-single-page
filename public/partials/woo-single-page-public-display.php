@@ -161,47 +161,30 @@ $product_price = $product->get_price();
 
                             <?php
                             $basic_addons = get_post_meta($product_id, '_basic_filing_addons', true);
-                            //    echo "<pre>";
-                            //    print_r($basic_addons);
-                            
-                            /**
-                             * 
-                             * Array
-(
-    [0] => Array
-        (
-            [label] => B1
-            [price] => 10
-            [value] => b1
-        )
-
-    [1] => Array
-        (
-            [label] => B2
-            [price] => 11
-            [value] => b2
-        )
-
-)
-                             */
                             ?>
                             <div class="addons">
                                 <?php
-                                foreach ($basic_addons as $key => $data) { ?>
-                                    <div class="addon-option">
-                                        <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
-                                            name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
-                                            data-price="<?php echo esc_attr_e($data['price']); ?>">
-                                        <label for="<?php echo esc_attr_e($data['value']); ?>">
-                                            <h3><?php echo esc_attr_e($data['label']); ?></h3>
-                                            <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
-                                        </label>
-                                    </div>
-                                <?php } ?>
+                                if ($basic_addons) {
+                                    foreach ($basic_addons as $key => $data) { ?>
+                                        <div class="addon-option">
+                                            <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
+                                                name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
+                                                data-price="<?php echo esc_attr_e($data['price']); ?>">
+                                            <label for="<?php echo esc_attr_e($data['value']); ?>">
+                                                <h3><?php echo esc_attr_e($data['label']); ?></h3>
+                                                <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
+                                            </label>
+                                        </div>
+                                    <?php }
+                                } else {
+                                    ?>
+                                    There is no addon
+                                    <?php
+                                } ?>
                             </div>
 
                             <div class="package-details">
-                                <h4>Gold Package Includes:</h4>
+                                <h4>Basic Package Includes:</h4>
                                 <?php display_package_features('basic'); ?>
                             </div>
 
@@ -215,17 +198,23 @@ $product_price = $product->get_price();
                             ?>
                             <div class="addons">
                                 <?php
-                                foreach ($gold_addons as $key => $data) { ?>
-                                    <div class="addon-option">
-                                        <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
-                                            name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
-                                            data-price="<?php echo esc_attr_e($data['price']); ?>">
-                                        <label for="<?php echo esc_attr_e($data['value']); ?>">
-                                            <h3><?php echo esc_attr_e($data['label']); ?></h3>
-                                            <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
-                                        </label>
-                                    </div>
-                                <?php } ?>
+                                if ($gold_addons) {
+                                    foreach ($gold_addons as $key => $data) { ?>
+                                        <div class="addon-option">
+                                            <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
+                                                name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
+                                                data-price="<?php echo esc_attr_e($data['price']); ?>">
+                                            <label for="<?php echo esc_attr_e($data['value']); ?>">
+                                                <h3><?php echo esc_attr_e($data['label']); ?></h3>
+                                                <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
+                                            </label>
+                                        </div>
+                                    <?php }
+                                } else {
+                                    ?>
+                                    There is no addon
+                                    <?php
+                                } ?>
                             </div>
 
                             <!-- Gold Package Details Section with Ginger Icon -->
@@ -243,21 +232,27 @@ $product_price = $product->get_price();
                             ?>
                             <div class="addons">
                                 <?php
-                                foreach ($premium_addons as $key => $data) { ?>
-                                    <div class="addon-option">
-                                        <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
-                                            name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
-                                            data-price="<?php echo esc_attr_e($data['price']); ?>">
-                                        <label for="<?php echo esc_attr_e($data['value']); ?>">
-                                            <h3><?php echo esc_attr_e($data['label']); ?></h3>
-                                            <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
-                                        </label>
-                                    </div>
-                                <?php } ?>
+                                if ($premium_addons) {
+                                    foreach ($premium_addons as $key => $data) { ?>
+                                        <div class="addon-option">
+                                            <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
+                                                name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
+                                                data-price="<?php echo esc_attr_e($data['price']); ?>">
+                                            <label for="<?php echo esc_attr_e($data['value']); ?>">
+                                                <h3><?php echo esc_attr_e($data['label']); ?></h3>
+                                                <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
+                                            </label>
+                                        </div>
+                                    <?php }
+                                } else {
+                                    ?>
+                                    There is no addon
+                                    <?php
+                                } ?>
                             </div>
 
                             <div class="package-details">
-                                <h4>Gold Package Includes:</h4>
+                                <h4>Premium Package Includes:</h4>
                                 <?php display_package_features('premium'); ?>
                             </div>
                         </div>
@@ -284,18 +279,24 @@ $product_price = $product->get_price();
 
                             <div class="addons">
                                 <?php
-                                foreach ($business_addons as $key => $data) { ?>
-                                    <div class="addon-option">
-                                        <input type="checkbox" id="<?php echo esc_attr_e($data['value']); ?>"
-                                            name="addon_selection[]" value="<?php echo esc_attr_e($data['value']); ?>"
-                                            data-price="<?php echo esc_attr_e($data['price']); ?>">
-                                        <label for="<?php echo esc_attr_e($data['value']); ?>">
-                                            <h3><?php echo esc_attr_e($data['label']); ?></h3>
-                                            <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
-                                        </label>
-                                    </div>
-                                <?php } ?>
-
+                                if ($business_addons) {
+                                    foreach ($business_addons as $key => $data) { ?>
+                                        <div class="addon-option">
+                                            <input type="checkbox" id="<?php echo esc_attr_e($data['value']); ?>"
+                                                name="addon_selection[]" value="<?php echo esc_attr_e($data['value']); ?>"
+                                                data-price="<?php echo esc_attr_e($data['price']); ?>">
+                                            <label for="<?php echo esc_attr_e($data['value']); ?>">
+                                                <h3><?php echo esc_attr_e($data['label']); ?></h3>
+                                                <span class="price">$<?php echo esc_attr_e($data['price']); ?></span>
+                                            </label>
+                                        </div>
+                                    <?php }
+                                } else {
+                                    ?>
+                                    There is no addon
+                                    <?php
+                                }
+                                ?>
                             </div>
                         </div>
                         <div class="section-navigation">

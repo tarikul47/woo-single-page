@@ -84,5 +84,6 @@ function run_woo_single_page()
 	$plugin->run();
 
 }
+
 run_woo_single_page();
 

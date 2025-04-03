@@ -220,6 +220,12 @@ class Woo_Single_Page
 		//admin order age remove 
 		$this->loader->add_action('admin_footer', $plugin_public, 'wsp_admin_footer');
 
+		// Guest Register phone number required set 
+		// 1. Make phone field required for guests
+		$this->loader->add_action('woocommerce_checkout_process', $plugin_public, 'wsp_custom_validate_guest_phone');
+		$this->loader->add_filter('woocommerce_billing_fields', $plugin_public, 'wsp_custom_require_phone_for_guests', 20, 1);
+		$this->loader->add_filter('woocommerce_form_field_phone', $plugin_public, 'wsp_custom_phone_field_validation', 10, 4);
+
 	}
 
 	/**
