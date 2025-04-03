@@ -19,12 +19,32 @@
 
 defined('ABSPATH') || exit;
 
+function display_package_features($package_type)
+{
+    $features = get_post_meta(get_the_ID(), '_' . $package_type . '_features', true);
+
+    if (empty($features) || !is_array($features)) {
+        return;
+    }
+
+    echo '<ul>';
+    foreach ($features as $feature) {
+        if (isset($feature['title'])) {
+            echo '<li><i class="fas fa-check"></i> ' . esc_html($feature['title']) . '</li>';
+        }
+    }
+    echo '</ul>';
+}
+
+
 global $product;
 
 // Get product data
 $product_id = $product->get_id();
 $product_name = $product->get_name();
 $product_price = $product->get_price();
+
+
 ?>
 
 <div class="checkout-container">
@@ -214,6 +234,11 @@ $product_price = $product->get_price();
                                 <?php } ?>
                             </div>
 
+                            <div class="package-details">
+                                <h4>Gold Package Includes:</h4>
+                                <?php display_package_features('basic'); ?>
+                            </div>
+
                         </div>
 
                         <!-- Gold Package Addons -->
@@ -240,12 +265,7 @@ $product_price = $product->get_price();
                             <!-- Gold Package Details Section with Ginger Icon -->
                             <div class="package-details">
                                 <h4>Gold Package Includes:</h4>
-                                <ul>
-                                    <li><i class="fas fa-cookie-bite"></i> Business Branding Kit</li>
-                                    <li><i class="fas fa-cookie-bite"></i> Social Media Setup</li>
-                                    <li><i class="fas fa-cookie-bite"></i> Marketing Strategy Guide</li>
-                                    <li><i class="fas fa-cookie-bite"></i> Dedicated Support</li>
-                                </ul>
+                                <?php display_package_features('gold'); ?>
                             </div>
                         </div>
 
@@ -269,6 +289,11 @@ $product_price = $product->get_price();
                                     </div>
                                 <?php } ?>
                             </div>
+
+                            <div class="package-details">
+                                <h4>Gold Package Includes:</h4>
+                                <?php display_package_features('premium'); ?>
+                            </div>
                         </div>
 
                         <div class="section-navigation">
@@ -290,12 +315,13 @@ $product_price = $product->get_price();
                             <?php
                             $business_addons = get_post_meta($product_id, '_business_addons', true);
                             ?>
+
                             <div class="addons">
                                 <?php
                                 foreach ($business_addons as $key => $data) { ?>
                                     <div class="addon-option">
                                         <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
-                                            name="basic_addon" value="<?php echo esc_attr_e($data['value']); ?>"
+                                            name="addon_selection[]" value="<?php echo esc_attr_e($data['value']); ?>"
                                             data-price="<?php echo esc_attr_e($data['price']); ?>">
                                         <label for="<?php echo esc_attr_e($data['value']); ?>">
                                             <h3><?php echo esc_attr_e($data['label']); ?></h3>
@@ -303,6 +329,7 @@ $product_price = $product->get_price();
                                         </label>
                                     </div>
                                 <?php } ?>
+
                             </div>
                         </div>
                         <div class="section-navigation">
