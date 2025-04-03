@@ -2,23 +2,21 @@
 jQuery(document).ready(function ($) {
   // -----------------
 
-  // Toggle meta box visibility based on product type
-  function toggleMetaBox() {
-    var productType = $("#product-type").val();
-    var $metaBox = $("#custom_checkout_options");
+  function handleCheckoutVisibility() {
+    var isEnabled = $("#_enable_custom_checkout").is(":checked");
+    // Always hide first, then conditionally show
+    $("#custom_checkout_options, #package_descriptions").hide();
 
-    if (productType === "simple") {
-      $metaBox.show();
-    } else {
-      $metaBox.hide();
+    if (isEnabled) {
+      $("#custom_checkout_options, #package_descriptions").show();
     }
   }
 
-  // Initial check
-  toggleMetaBox();
+  // Initial state
+  handleCheckoutVisibility();
 
-  // Update on product type change
-  $("#product-type").on("change", toggleMetaBox);
+  // Toggle on checkbox change
+  $("#_enable_custom_checkout").on("change", handleCheckoutVisibility);
 
   // -----------------
 

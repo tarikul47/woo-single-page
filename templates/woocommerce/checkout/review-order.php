@@ -20,8 +20,8 @@ defined('ABSPATH') || exit;
 <table class="shop_table woocommerce-checkout-review-order-table">
     <thead>
         <tr>
-            <th class="product-name"><?php esc_html_e('Product - review-order.php', 'woocommerce'); ?></th>
-            <th class="product-total"><?php esc_html_e('Subtotal hhh', 'woocommerce'); ?></th>
+            <th class="product-name"><?php esc_html_e('Product', 'woocommerce'); ?></th>
+            <th class="product-total"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
         </tr>
     </thead>
     <tbody>
@@ -35,7 +35,7 @@ defined('ABSPATH') || exit;
                 ?>
                 <tr
                     class="<?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
-                    <td class="product-name">
+                    <td class="product-name" style="text-align:left;">
                         <?php echo wp_kses_post(apply_filters('woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key)) . '&nbsp;'; ?>
                         <?php echo wc_get_formatted_cart_item_data($cart_item); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </td>
@@ -77,7 +77,7 @@ defined('ABSPATH') || exit;
             }
             ?>
             <tr class="fee">
-                <th><?php echo esc_html($fee->name); ?></th>
+                <th style="text-align:left;"><?php echo esc_html($fee->name); ?></th>
                 <td><?php wc_cart_totals_fee_html($fee); ?></td>
             </tr>
         <?php endforeach; ?>

@@ -49,20 +49,28 @@ class Woo_Single_Page_Public
 	 * @param      string    $version    The version of this plugin.
 	 */
 
-	public $product_id;
 	public function __construct($plugin_name, $version)
 	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-
-		$this->product_id = 104;
 	}
 
 	// custom design show condition 
 	public function wsp_woocommerce_before_single_product_summary()
 	{
-		if (is_product() && $this->product_id == get_the_ID()) {
+		global $product;
+
+		if (!$product) {
+			$product = wc_get_product(get_the_ID());
+		}
+
+		$product_id = $product ? $product->get_id() : 0;
+
+		// Get your custom meta
+		$is_custom_page = get_post_meta($product_id, '_enable_custom_checkout', true);
+
+		if (is_product() && $is_custom_page == 'yes') {
 			include WOO_SINGLE_PAGE_PATH . 'public/partials/woo-single-page-public-display.php';
 		}
 	}
@@ -108,7 +116,8 @@ class Woo_Single_Page_Public
 			if (!empty($custom_data['members'])) {
 				$members_list = '';
 				foreach ($custom_data['members'] as $index => $member) {
-					$members_list .= ($index + 1) . '. ' . esc_html($member) . ' <br>';
+					//	$members_list .= ($index + 1) . '. ' . esc_html($member) . ' <br>';
+					$members_list .= esc_html($member) . ', ';
 				}
 
 				$item_data[] = array(
@@ -121,7 +130,8 @@ class Woo_Single_Page_Public
 			if (!empty($custom_data['managers'])) {
 				$managers_list = '';
 				foreach ($custom_data['managers'] as $index => $manager) {
-					$managers_list .= ($index + 1) . '. ' . esc_html($manager) . ' <br>';
+					//$managers_list .= ($index + 1) . '. ' . esc_html($manager) . ' <br>';
+					$managers_list .= esc_html($manager) . ', ';
 				}
 
 				$item_data[] = array(
@@ -164,17 +174,18 @@ class Woo_Single_Page_Public
 			$custom_data = $values['custom_data'];
 
 			if (!empty($custom_data['company_names'])) {
-				$item->add_meta_data('Companies', implode(', ', $custom_data['company_names']), true);
+				$item->add_meta_data('Companies ', implode(', ', $custom_data['company_names']), true);
 			}
 
 			if (!empty($custom_data['business_type'])) {
-				$item->add_meta_data('Business Type', ucfirst($custom_data['business_type']), true);
+				$item->add_meta_data('Business Type ', ucfirst($custom_data['business_type']), true);
 			}
 
 			if (!empty($custom_data['members'])) {
 				$members_list = '';
 				foreach ($custom_data['members'] as $index => $member) {
-					$members_list .= ($index + 1) . '. ' . esc_html($member);
+					//$members_list .= ($index + 1) . '. ' . esc_html($member);
+					$members_list .= esc_html($member) . ", ";
 				}
 				$item->add_meta_data('Members', trim($members_list), true);
 			}
@@ -182,7 +193,8 @@ class Woo_Single_Page_Public
 			if (!empty($custom_data['managers'])) {
 				$managers_list = '';
 				foreach ($custom_data['managers'] as $index => $manager) {
-					$managers_list .= ($index + 1) . '. ' . esc_html($manager);
+					//$managers_list .= ($index + 1) . '. ' . esc_html($manager);
+					$managers_list .= esc_html($manager) . ", ";
 				}
 				$item->add_meta_data('Managers', trim($managers_list), true);
 			}
@@ -230,10 +242,13 @@ class Woo_Single_Page_Public
 	public function wsp_add_specific_product_body_class($classes)
 	{
 		if (is_checkout() && !WC()->cart->is_empty()) {
-			$specific_product_id = 104; // Replace with your product ID
 
 			foreach (WC()->cart->get_cart() as $cart_item) {
-				if ($cart_item['product_id'] == $specific_product_id) {
+
+				// Get your custom meta
+				$is_custom_page = get_post_meta($cart_item['product_id'], '_enable_custom_checkout', true);
+
+				if ($is_custom_page == 'yes') {
 					$classes[] = 'specific-product-in-cart';
 					break;
 				}
@@ -244,11 +259,14 @@ class Woo_Single_Page_Public
 		if (is_order_received_page()) {
 			$order_id = absint(get_query_var('order-received'));
 			$order = wc_get_order($order_id);
-			$specific_product_id = 104;
 
 			if ($order) {
 				foreach ($order->get_items() as $item) {
-					if ($item->get_product_id() == $specific_product_id) {
+
+					// Get your custom meta
+					$is_custom_page = get_post_meta($item->get_product_id(), '_enable_custom_checkout', true);
+
+					if ($is_custom_page == 'yes') {
 						$classes[] = 'specific-product-in-cart';
 						break;
 					}
@@ -262,7 +280,18 @@ class Woo_Single_Page_Public
 
 	public function wsp_custom_enqueue_scripts()
 	{
-		if (is_product() && $this->product_id == get_the_ID()) {
+		global $product;
+
+		if (!$product) {
+			$product = wc_get_product(get_the_ID());
+		}
+
+		$product_id = $product ? $product->get_id() : 0;
+
+		// Get your custom meta
+		$is_custom_page = get_post_meta($product_id, '_enable_custom_checkout', true);
+
+		if (is_product() && $is_custom_page == 'yes') {
 			?>
 			<style>
 				.tp-woo-single-gallery-wrapper {
@@ -283,61 +312,6 @@ class Woo_Single_Page_Public
 					});
 				});
 			</script>
-			<?php
-		}
-
-		?>
-
-		<style>
-			/* body.specific-product-in-cart .woocommerce-checkout-review-order-table th.product-total,
-																							body.specific-product-in-cart .woocommerce-checkout-review-order-table td.product-total,
-																							body.specific-product-in-cart .woocommerce-checkout-review-order-table tr.cart-subtotal,
-																							body.specific-product-in-cart .woocommerce-order-details .tp-order-info-list-header h4,
-																							{
-																							display: none !important;
-																							}
-
-																							body.specific-product-in-cart table.woocommerce-checkout-review-order-table tbody td,
-																							body.specific-product-in-cart table.woocommerce-checkout-review-order-table tfoot tr th {
-																								text-align: left !important;
-																							}
-
-																							body.specific-product-in-cart .tp-order-info-list ul li.tp-order-info-list-header:last-child {
-																								display: none !important;
-																							} */
-		</style>
-
-		<?php
-
-		if (is_checkout()) {
-			?>
-			<!-- <script>
-				(function ($) {
-					// Function to hide the fee
-					function hideFee() {
-						if ($('body').hasClass('specific-product-in-cart')) {
-							// Target the order-total row
-							var $orderTotal = $('tr.order-total');
-							// Get the immediate previous row (the fee)
-							var $previousRow = $orderTotal.prev('tr.fee');
-							if ($previousRow.length) {
-								$previousRow.hide();
-							}
-						}
-					}
-
-					// Run on initial page load
-					hideFee();
-
-					// Re-run when checkout updates (AJAX)
-					$(document).on('updated_checkout', function () {
-						hideFee();
-					});
-
-					// Optional: Add a slight delay for edge cases
-					setTimeout(hideFee, 100);
-				})(jQuery);
-			</script> -->
 			<?php
 		}
 
@@ -430,24 +404,26 @@ class Woo_Single_Page_Public
 			error_log('❌ Order object not found');
 			return;
 		}
-
-		$target_product_id = 104; // Change this to your product ID
+		$product_id = '';
 		$product_found = false;
 
 		// Debug: Print all order items
 		foreach ($order->get_items() as $item) {
 			$product_id = $item->get_product_id();
-			error_log("🔎 Found Product ID: $product_id");
-			if ($product_id == $target_product_id) {
+
+			// Get your custom meta
+			$is_custom_page = get_post_meta($product_id, '_enable_custom_checkout', true);
+
+			if ($is_custom_page == 'yes') {
 				$product_found = true;
-				error_log("✅ Target product ($target_product_id) found in order!");
+				error_log("✅ Target product ($product_id) found in order!");
 				break;
 			}
 		}
 
 		// Final Debug Output
 		if (!$product_found) {
-			error_log("❌ Target product ($target_product_id) NOT found in order.");
+			error_log("❌ Target product ($product_id) NOT found in order.");
 		}
 
 		// If product is found, inject JavaScript
@@ -455,7 +431,7 @@ class Woo_Single_Page_Public
 			?>
 			<script>
 				jQuery(document).ready(function ($) {
-					alert('Product 104 found! Hiding elements.');
+					//alert('Product 104 found! Hiding elements.');
 
 					// Remove table rows data
 					$('.woocommerce_order_items .item_cost').hide();
@@ -464,6 +440,8 @@ class Woo_Single_Page_Public
 
 					// Remove the first row in the order totals table (Items Subtotal)
 					$('.wc-order-totals tbody tr:first').hide();
+					// Remove the second row (index 1)
+					$('.wc-order-totals tbody tr:eq(1)').hide(); // Fees 
 				});
 
 			</script>
@@ -490,8 +468,30 @@ class Woo_Single_Page_Public
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		if (is_product()) {
-			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/woo-single-page-public.css', array(), $this->version, 'all');
+
+		// Only proceed on product pages
+		if (!is_product())
+			return;
+
+		// Get product ID safely
+		$product_id = get_queried_object_id();
+		$product = wc_get_product($product_id);
+
+		// Verify we have a valid product
+		if (!$product || !is_a($product, 'WC_Product'))
+			return;
+
+		// Check custom meta
+		$is_custom_page = get_post_meta($product_id, '_enable_custom_checkout', true);
+
+		if ($is_custom_page === 'yes') {
+			wp_enqueue_style(
+				$this->plugin_name,
+				plugin_dir_url(__FILE__) . 'css/woo-single-page-public.css',
+				array(),
+				$this->version,
+				'all'
+			);
 		}
 
 	}
@@ -515,7 +515,23 @@ class Woo_Single_Page_Public
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-		if (is_product()) {
+
+		// Only proceed on product pages
+		if (!is_product())
+			return;
+
+		// Get product ID safely
+		$product_id = get_queried_object_id();
+		$product = wc_get_product($product_id);
+
+		// Verify we have a valid product
+		if (!$product || !is_a($product, 'WC_Product'))
+			return;
+
+		// Check custom meta
+		$is_custom_page = get_post_meta($product_id, '_enable_custom_checkout', true);
+
+		if (is_product() && $is_custom_page == 'yes') {
 			wp_enqueue_script('jquery');
 			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/woo-single-page-public.js', array('jquery'), $this->version, false);
 

@@ -443,42 +443,6 @@ select.error {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgMzYzIj48cGF0aCBmaWxsPSIjRkZGIiBkPSJNNTc2IDI4MS4zYzAgNDUuMS0zNi43IDgxLjctODEuOSA4MS43SDgxLjljLTQ1LjIgMC04MS45LTM2LjYtODEuOS04MS43VjgxLjdDMCAzNi42IDM2LjcgMCA4MS45IDBINTA0YzQ1LjIgMCA4MS45IDM2LjYgODEuOSA4MS43djE5OS42aC4xeiIvPjxwYXRoIGZpbGw9IiNGRjZCMDAiIGQ9Ik0yODggMTQzLjJoLTU0LjJMMTk0LjEgMzIxLjdoNTQuMmwzOS43LTE3OC41eiIvPjxwYXRoIGZpbGw9IiNGNEY0RjQiIGQ9Ik01NzYgMjgxLjNjMCA0NS4xLTM2LjcgODEuNy04MS45IDgxLjdIMjg4VjBINTA0YzQ1LjIgMCA4MS45IDM2LjYgODEuOSA4MS43djE5OS42aC4xeiIvPjxwYXRoIGZpbGw9IiNGRjZCMDAiIGQ9Ik00MzUuMiAxNDMuMmgtNTQuMmwtMzkuNyAxNzguNWg1NC4ybDM5LjctMTc4LjV6Ii8+PC9zdmc+");
 }
 
-/* Generate Password Button */
-.generate-password {
-    background-color: #004165;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-/* Password Requirements */
-.password-requirements {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-.password-requirements ul {
-    padding-left: 20px;
-    margin: 10px 0 0;
-}
-
-.password-requirements li {
-    margin-bottom: 5px;
-    color: #777;
-}
-
-.password-requirements li.valid {
-    color: #27ae60;
-}
-
-.password-requirements li.valid:before {
-    content: "✓ ";
-}
 
 /* Section Navigation */
 .section-navigation {
@@ -657,6 +621,13 @@ body.specific-product-in-cart .woocommerce-checkout-review-order-table td.produc
     margin-right: 8px;
 }
 
+/* Button group CSS for Member and Manager */
+.button-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {

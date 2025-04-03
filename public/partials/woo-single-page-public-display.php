@@ -110,52 +110,18 @@ $product_price = $product->get_price();
                         <span class="toggle-icon"></span>
                     </div>
                     <div class="section-content">
-                        <div id="member-container" class="management-container"></div>
-                        <button type="button" class="add-member-btn">+ Add Another Member</button>
+                        <div class="button-group">
+                            <button type="button" class="add-member-btn">+ Add Another Member</button>
+                            <button type="button" class="add-manager-btn">+ Add Another Manager</button>
+                        </div>
 
                         <div id="manager-container" class="management-container"></div>
-                        <button type="button" class="add-manager-btn">+ Add Another Manager</button>
+                        <div id="member-container" class="management-container"></div>
 
                         <div class="section-navigation">
                             <button type="button" class="continue-btn" data-next="4">Continue</button>
                         </div>
                     </div>
-                    <!-- <div class="section-content">
-                        <div class="form-group">
-                            <label for="management-type">Select Management Type <span class="required">*</span></label>
-                            <select id="management-type" name="management_type" required>
-                                <option value="member">Member</option>
-                                <option value="manager">Manager</option>
-                            </select>
-                        </div>
-
-                        <div id="member-container" class="management-container">
-                            <div class="member-entry">
-                                <h3>Member Information</h3>
-                                <div class="form-group">
-                                    <label for="member-name-1">Name <span class="required">*</span></label>
-                                    <input type="text" id="member-name-1" name="member_name[]" required>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="add-member-btn">+ Add Another Member</button>
-
-                        <div id="manager-container" class="management-container" style="display: none;">
-                            <div class="manager-entry">
-                                <h3>Manager Information</h3>
-                                <div class="form-group">
-                                    <label for="manager-name-1">Name <span class="required">*</span></label>
-                                    <input type="text" id="manager-name-1" name="manager_name[]" required="false">
-                                </div>                               
-                            </div>
-                        </div>
-                        <button type="button" class="add-manager-btn" style="display: none;">+ Add Another
-                            Manager</button>
-
-                        <div class="section-navigation">
-                            <button type="button" class="continue-btn" data-next="4">Continue</button>
-                        </div>
-                    </div> -->
                 </div>
 
                 <!-- Section 4: Filing Options -->
@@ -320,7 +286,7 @@ $product_price = $product->get_price();
                                 <?php
                                 foreach ($business_addons as $key => $data) { ?>
                                     <div class="addon-option">
-                                        <input type="radio" id="<?php echo esc_attr_e($data['value']); ?>"
+                                        <input type="checkbox" id="<?php echo esc_attr_e($data['value']); ?>"
                                             name="addon_selection[]" value="<?php echo esc_attr_e($data['value']); ?>"
                                             data-price="<?php echo esc_attr_e($data['price']); ?>">
                                         <label for="<?php echo esc_attr_e($data['value']); ?>">

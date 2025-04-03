@@ -150,6 +150,16 @@ class Woo_Single_Page_Admin
 	 */
 	public function add_custom_meta_boxes()
 	{
+		// Control Metabox
+		add_meta_box(
+			'custom_checkout_control',
+			__('Custom Checkout Settings', 'custom-product-checkout'),
+			array($this, 'render_control_meta_box'),
+			'product',
+			'normal',
+			'high'
+		);
+
 		// Options Meta Box
 		add_meta_box(
 			'custom_checkout_options',
@@ -171,17 +181,37 @@ class Woo_Single_Page_Admin
 		);
 
 		// Add visibility classes to both meta boxes
-		add_filter('postbox_classes_product_custom_checkout_options', array($this, 'add_meta_box_classes'));
-		add_filter('postbox_classes_product_package_descriptions', array($this, 'add_meta_box_classes'));
+		//	add_filter('postbox_classes_product_custom_checkout_options', array($this, 'add_meta_box_classes'));
+		//	add_filter('postbox_classes_product_package_descriptions', array($this, 'add_meta_box_classes'));
 	}
 
 	/**
 	 * Add visibility classes to meta boxes
 	 */
-	public function add_meta_box_classes($classes)
+	// public function add_meta_box_classes($classes)
+	// {
+	// 	array_push($classes, 'show_if_simple', 'show_if_variable');
+	// 	return $classes;
+	// }
+
+	/**
+	 * Render Control Metabox
+	 */
+	public function render_control_meta_box($post)
 	{
-		array_push($classes, 'show_if_simple', 'show_if_variable');
-		return $classes;
+		wp_nonce_field('custom_checkout_meta_save', 'custom_checkout_meta_nonce');
+
+		echo '<div class="options-container" style="padding:10px 0;">';
+
+		woocommerce_wp_checkbox(array(
+			'id' => '_enable_custom_checkout',
+			'label' => __('Enable Custom page', 'custom-product-checkout'),
+			//'description' => __('Show advanced checkout options', 'custom-product-checkout'),
+			'value' => get_post_meta($post->ID, '_enable_custom_checkout', true),
+			'wrapper_class' => 'custom-checkout-toggle' // Added wrapper class
+		));
+
+		echo '</div>';
 	}
 
 	/**
@@ -191,16 +221,16 @@ class Woo_Single_Page_Admin
 	{
 		wp_nonce_field('custom_checkout_meta_save', 'custom_checkout_meta_nonce');
 
-		echo '<div class="options-container">';
+		// echo '<div class="options-container">';
 
-		// Enable Checkbox
-		echo '<div class="options_group">';
-		woocommerce_wp_checkbox(array(
-			'id' => '_enable_custom_checkout',
-			'label' => __('Enable Custom Checkout Options', 'custom-product-checkout'),
-			'description' => __('Enable to show custom checkout options', 'custom-product-checkout')
-		));
-		echo '</div>';
+		// // Enable Checkbox
+		// echo '<div class="options_group">';
+		// woocommerce_wp_checkbox(array(
+		// 	'id' => '_enable_custom_checkout',
+		// 	'label' => __('Enable Custom Checkout Options', 'custom-product-checkout'),
+		// 	'description' => __('Enable to show custom checkout options', 'custom-product-checkout')
+		// ));
+		// echo '</div>';
 
 		// Filing Options
 		$this->add_filing_options_section('basic', 'Basic Options', $post);
