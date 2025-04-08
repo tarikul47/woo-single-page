@@ -327,45 +327,99 @@ class Woo_Single_Page_Public
 
 	}
 
+	// public function wsp_woocommerce_locate_template($template, $template_name, $template_path)
+	// {
+	// 	// Target ONLY the review-order.php template
+	// 	if ('checkout/review-order.php' === $template_name) {
+	// 		// Path to your plugin's template file
+	// 		$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/checkout/review-order.php';
+
+	// 		// Check if the file exists, then override
+	// 		if (file_exists($plugin_template_path)) {
+	// 			//	var_dump($plugin_template_path);
+
+	// 			$template = $plugin_template_path;
+	// 		}
+	// 	}// Target ONLY the review-order.php template
+	// 	if ('order/order-details.php' === $template_name) {
+	// 		// 	// Path to your plugin's template file
+	// 		$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/order/order-details.php';
+
+	// 		// Check if the file exists, then override
+	// 		if (file_exists($plugin_template_path)) {
+	// 			//	var_dump($plugin_template_path);
+
+	// 			$template = $plugin_template_path;
+	// 		}
+	// 	}
+
+	// 	if ('order/order-details-item.php' === $template_name) {
+	// 		// Path to your plugin's template file
+	// 		$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/order/order-details-item.php';
+
+	// 		// Check if the file exists, then override
+	// 		if (file_exists($plugin_template_path)) {
+	// 			//	var_dump($plugin_template_path);
+
+	// 			$template = $plugin_template_path;
+	// 		}
+	// 	}
+
+	// 	if ('email/email-order-details.php' === $template_name) {
+	// 		// Path to your plugin's template file
+	// 		$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/email/email-order-details.php';
+
+	// 		// Check if the file exists, then override
+	// 		if (file_exists($plugin_template_path)) {
+	// 			//	var_dump($plugin_template_path);
+
+	// 			$template = $plugin_template_path;
+	// 		}
+	// 	}
+
+	// 	if ('email/email-order-items.php' === $template_name) {
+	// 		// Path to your plugin's template file
+	// 		$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/email/email-order-items.php';
+
+	// 		// Check if the file exists, then override
+	// 		if (file_exists($plugin_template_path)) {
+	// 			//	var_dump($plugin_template_path);
+
+	// 			$template = $plugin_template_path;
+	// 		}
+	// 	}
+
+	// 	error_log(print_r('$template_name',true));
+	// 	error_log(print_r($template_name,true));
+
+	// 	return $template;
+	// }
+
+
 	public function wsp_woocommerce_locate_template($template, $template_name, $template_path)
 	{
-		// Target ONLY the review-order.php template
-		if ('checkout/review-order.php' === $template_name) {
-			// Path to your plugin's template file
-			$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/checkout/review-order.php';
+		$custom_templates = array(
+			'emails/email-order-details.php' => 'emails/email-order-details.php',
+			'emails/email-order-items.php' => 'emails/email-order-items.php',
+			'checkout/review-order.php' => 'checkout/review-order.php',
+			'order/order-details.php' => 'order/order-details.php',
+			'order/order-details-item.php' => 'order/order-details-item.php'
+		);
 
-			// Check if the file exists, then override
-			if (file_exists($plugin_template_path)) {
-				//	var_dump($plugin_template_path);
+		if (array_key_exists($template_name, $custom_templates)) {
+			$plugin_path = WOO_SINGLE_PAGE_PATH . 'templates/woocommerce/' . $custom_templates[$template_name];
+			//	error_log("[WSP Debug] Checking plugin path: {$plugin_path}");
 
-				$template = $plugin_template_path;
-			}
-		}// Target ONLY the review-order.php template
-		if ('order/order-details.php' === $template_name) {
-			// 	// Path to your plugin's template file
-			$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/order/order-details.php';
-
-			// Check if the file exists, then override
-			if (file_exists($plugin_template_path)) {
-				//	var_dump($plugin_template_path);
-
-				$template = $plugin_template_path;
-			}
-		}
-
-		if ('order/order-details-item.php' === $template_name) {
-			// Path to your plugin's template file
-			$plugin_template_path = WOO_SINGLE_PAGE_PATH . '/templates/woocommerce/order/order-details-item.php';
-
-			// Check if the file exists, then override
-			if (file_exists($plugin_template_path)) {
-				//	var_dump($plugin_template_path);
-
-				$template = $plugin_template_path;
+			if (file_exists($plugin_path)) {
+				//	error_log("[WSP Debug] Using plugin template: {$plugin_path}");
+				return $plugin_path;
+			} else {
+				error_log("[WSP Debug] Plugin template not found at: {$plugin_path}");
 			}
 		}
 		return $template;
 	}
+
 
 	public function wsp_woocommerce_checkout_create_order_fee_item($item, $fee_key, $fee, $order)
 	{
