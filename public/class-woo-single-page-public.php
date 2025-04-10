@@ -184,9 +184,10 @@ class Woo_Single_Page_Public
 			$custom_data = $values['custom_data'];
 
 			if (!empty($custom_data['company_names'])) {
-				$item->add_meta_data('Companies ', implode(', ', $custom_data['company_names']), true);
+				$company_names = implode(', ', array_map('esc_html', $custom_data['company_names']));
+				$item->add_meta_data('Companies', $company_names, true);
 			}
-
+			
 			if (!empty($custom_data['business_type'])) {
 				$item->add_meta_data('Business Type ', ucfirst($custom_data['business_type']), true);
 			}

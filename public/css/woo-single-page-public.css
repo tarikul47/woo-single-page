@@ -195,7 +195,6 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="tel"],
-input[type="password"],
 select {
     width: 100%;
     padding: 10px;
@@ -207,7 +206,6 @@ select {
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="tel"]:focus,
-input[type="password"]:focus,
 select:focus {
     border-color: #004165;
     outline: none;
@@ -302,6 +300,10 @@ select.error {
 .filing-option h3 {
     margin-top: 0;
     color: #004165;
+}
+
+.addon-container h4 {
+    padding-bottom: 15px;
 }
 
 .filing-option .price {
@@ -411,42 +413,6 @@ select.error {
     margin-top: 5px;
     color: #004165;
 }
-
-/* Payment Methods */
-.payment-methods {
-    margin-bottom: 20px;
-}
-
-.card-icons {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.card-icon {
-    width: 50px;
-    height: 30px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.card-icon.visa {
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgMzYzIj48cGF0aCBmaWxsPSIjMDAyNzlBIiBkPSJNNTc2IDI4MS4zYzAgNDUuMS0zNi43IDgxLjctODEuOSA4MS43SDgxLjljLTQ1LjIgMC04MS45LTM2LjYtODEuOS04MS43VjgxLjdDMCAzNi42IDM2LjcgMCA4MS45IDBINTA0YzQ1LjIgMCA4MS45IDM2LjYgODEuOSA4MS43djE5OS42aC4xeiIvPjxwYXRoIGZpbGw9IiNGRkYiIGQ9Ik0yMzYuNiAxNDMuMmwzMy42LTE3OC42aDUzLjlMMjkwLjUgMTQzLjJ6TTM4Mi44IDEzOC43bDI4LjItNzguNyAxNi40IDc4LjdIMzgyLjh6TTQ2Mi41IDE0My4yaDQ1LjNsLTM5LjcgMTc4LjVoLTUwLjFjLTExLjYgMC0yMS40LTYuOC0yNS44LTE3LjNsLTgzLjgtMTYxLjJoNTguMWwyMC44IDUxLjggNTcuOC0xNTEuOGg1My45bC0zNi41IDE3OC41ek0xMzMuOCAzMjEuN0w5NyAxNDMuMkg0Mi4xbDYyLjQgMTc4LjVoMjkuM3pNMzMzLjIgMTQzLjJoLTU0LjJMMjM5LjMgMzIxLjdoNTQuMmwzOS43LTE3OC41eiIvPjwvc3ZnPg==");
-}
-
-.card-icon.mastercard {
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgNCA1MDQgMzA0Ij48cGF0aCBmaWxsPSIjRkZCNjAwIiBkPSJNMTgzLjQgMTUxLjlhOTMuNSA5My41IDAgMSAxIDAgMTg3IDkzLjUgOTMuNSAwIDAgMSAwLTE4N3oiLz48cGF0aCBmaWxsPSIjRUIwMDFCIiBkPSJNMzIwLjYgMTUxLjlhOTMuNSA5My41IDAgMSAxIDAgMTg3IDkzLjUgOTMuNSAwIDAgMSAwLTE4N3oiLz48cGF0aCBmaWxsPSIjRjc5RTFCIiBkPSJNMjUyIDIwMS4yYTkzLjUgOTMuNSAwIDAgMCAwIDg4LjRoMGE5My41IDkzLjUgMCAwIDAgMC04OC40eiIvPjwvc3ZnPg==");
-}
-
-.card-icon.amex {
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgMzYzIj48cGF0aCBmaWxsPSIjMDA3OUM2IiBkPSJNNTc2IDI4MS4zYzAgNDUuMS0zNi43IDgxLjctODEuOSA4MS43SDgxLjljLTQ1LjIgMC04MS45LTM2LjYtODEuOS04MS43VjgxLjdDMCAzNi42IDM2LjcgMCA4MS45IDBINTA0YzQ1LjIgMCA4MS45IDM2LjYgODEuOSA4MS43djE5OS42aC4xeiIvPjxwYXRoIGZpbGw9IiNGRkYiIGQ9Ik0yNzkuNiAxOTcuM2gtNjEuOWwtMTQuMyAzNC4zSDE2MGwxLjQtMy4zIDY1LjktMTUxLjRoNDUuMmw2NS45IDE1MS40IDEuNCAzLjNoLTQ0LjlsLTE1LjMtMzQuM3ptLTExLjktMjcuNmwtMTkgNDMuNS0xOSA0My41aDM4ek00MTYgMjMxLjZoLTQ0LjJMMzA1LjQgNzYuOWg0OC4ybDM5LjEgOTAuNyAzOS4xLTkwLjdoNDguMkw0MTYgMjMxLjZ6Ii8+PC9zdmc+");
-}
-
-.card-icon.discover {
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgMzYzIj48cGF0aCBmaWxsPSIjRkZGIiBkPSJNNTc2IDI4MS4zYzAgNDUuMS0zNi43IDgxLjctODEuOSA4MS43SDgxLjljLTQ1LjIgMC04MS45LTM2LjYtODEuOS04MS43VjgxLjdDMCAzNi42IDM2LjcgMCA4MS45IDBINTA0YzQ1LjIgMCA4MS45IDM2LjYgODEuOSA4MS43djE5OS42aC4xeiIvPjxwYXRoIGZpbGw9IiNGRjZCMDAiIGQ9Ik0yODggMTQzLjJoLTU0LjJMMTk0LjEgMzIxLjdoNTQuMmwzOS43LTE3OC41eiIvPjxwYXRoIGZpbGw9IiNGNEY0RjQiIGQ9Ik01NzYgMjgxLjNjMCA0NS4xLTM2LjcgODEuNy04MS45IDgxLjdIMjg4VjBINTA0YzQ1LjIgMCA4MS45IDM2LjYgODEuOSA4MS43djE5OS42aC4xeiIvPjxwYXRoIGZpbGw9IiNGRjZCMDAiIGQ9Ik00MzUuMiAxNDMuMmgtNTQuMmwtMzkuNyAxNzguNWg1NC4ybDM5LjctMTc4LjV6Ii8+PC9zdmc+");
-}
-
 
 /* Section Navigation */
 .section-navigation {

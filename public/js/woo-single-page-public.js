@@ -76,12 +76,10 @@
       updateOrderSummary(); // Recalculate total after reset
     });
 
-    // Update total when any addon changes
+    //Update total when any addon changes
     $(
       'input[name="addon_selection[]"], input[name="premium_addon"], input[name="gold_addon"], input[name="basic_addon"]'
     ).on("change", updateOrderSummary);
-
-    updateOrderSummary();
 
     // Form submission
     $("#accordion-checkout-form").on("submit", handleFormSubmit);
@@ -111,8 +109,7 @@
         addonContainers[selectedOption].style.display = "block";
       }
 
-      // Update Order Summary (if needed)
-      updateOrderSummary();
+      // updateOrderSummary();
     }
 
     // Helper functions
@@ -204,11 +201,13 @@
 
       $(".summary-item").remove(); // Clear previous summary
 
+      var addonPrice = 0;
+
       // Handle Addons (checkboxes and radios)
       $(
         'input[name="addon_selection[]"]:checked, input[name="premium_addon"]:checked, input[name="gold_addon"]:checked, input[name="basic_addon"]:checked'
       ).each(function () {
-        const addonPrice = parseFloat($(this).data("price")) || 0;
+        var addonPrice = parseFloat($(this).data("price")) || 0;
         orderTotal += addonPrice;
 
         $(".summary-items").append(`

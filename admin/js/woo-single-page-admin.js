@@ -52,7 +52,7 @@ jQuery(document).ready(function ($) {
     $(`#${packageType}-addons`).show();
   });
 
-  $(".woocommerce_options_panel").on("click", ".remove-addon", function () {
+  $(".filing-options-group, .business-addons-group").on("click", ".remove-addon", function () {
     $(this).closest(".addon-entry").remove();
   });
 
