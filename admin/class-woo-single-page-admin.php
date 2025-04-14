@@ -323,197 +323,370 @@ class Woo_Single_Page_Admin
 	/**
 	 * Process custom form submission and add to cart
 	 */
+
 	public function process_custom_add_to_cart()
 	{
-		error_log('Processing custom add to cart');
-
-		// Verify nonce for security
-		if (isset($_POST['security']) && !wp_verify_nonce($_POST['security'], 'custom_add_to_cart_nonce')) {
-			error_log('Nonce verification failed');
-			wp_send_json_error(array('message' => 'Security check failed'));
-			exit;
-		}
-
-		// Get form data
-		$cart_items = isset($_POST['cart_items']) ? $_POST['cart_items'] : array();
-		$order_summary = isset($_POST['order_summary']) ? $_POST['order_summary'] : array();
-		$total_price = isset($_POST['total_price']) ? $_POST['total_price'] : array();
-
-		// Get product ID
-		$product_id = 0;
-		foreach ($cart_items as $item) {
-			if ($item['name'] === 'product_id') {
-				$product_id = absint($item['value']);
-				break;
-			}
-		}
-
-		if (!$product_id) {
-			error_log('Product ID is missing');
-			wp_send_json_error(array('message' => 'Product ID is missing'));
-			exit;
-		}
-
-		// Check if product exists
-		$product = wc_get_product($product_id);
-		if (!$product) {
-			error_log('Invalid product ID: ' . $product_id);
-			wp_send_json_error(array('message' => 'Invalid product'));
-			exit;
-		}
-
-		//	error_log('Adding product ID to cart: ' . $product_id);
-
-		// Validate required fields
-		$company_names = $this->get_form_values($cart_items, 'company_name');
-
-		if (empty($company_names)) {
-			wp_send_json_error(array('message' => 'Company name is required'));
-			exit;
-		}
-
-		// Validate management information
-		// $management_type = $this->get_form_value($cart_items, 'management_type');
-		// if ($management_type === 'member') {
-		// 	$member_names = $this->get_form_values($cart_items, 'member_name');
-		// 	$member_emails = $this->get_form_values($cart_items, 'member_email');
-
-		// 	if (empty($member_names) || empty($member_emails)) {
-		// 		wp_send_json_error(array('message' => 'Member information is required'));
-		// 		exit;
-		// 	}
-		// } else {
-		// 	$manager_names = $this->get_form_values($cart_items, 'manager_name');
-		// 	$manager_emails = $this->get_form_values($cart_items, 'manager_email');
-
-		// 	if (empty($manager_names) || empty($manager_emails)) {
-		// 		wp_send_json_error(array('message' => 'Manager information is required'));
-		// 		exit;
-		// 	}
-		// }
-
-
-		// Get members and managers (only names)
-		$member_names = $this->get_form_values($cart_items, 'member_name');
-		$manager_names = $this->get_form_values($cart_items, 'manager_name');
-
-		//error_log('member_names items: ' . print_r($member_names, true));
-		error_log('manager_names items: ' . print_r($cart_items, true));
-		error_log('order_summary items: ' . print_r($order_summary, true));
-		error_log('total_price items: ' . print_r($total_price, true));
-
-		// Validate addon selection
-		$addon_selection = $this->get_form_value($cart_items, 'addon_selection[]');
-		if (empty($addon_selection)) {
-			wp_send_json_error(array('message' => 'Business addon selection is required'));
-			exit;
-		}
-
-		// Get filing option and calculate price
-		$filing_option = $this->get_form_value($cart_items, 'filing_option');
-		$base_price = 99.0; // Default base price
-
-		if ($filing_option === 'gold') {
-			$base_price = 199.0;
-		} elseif ($filing_option === 'premium') {
-			$base_price = 299.0;
-		}
-
-		// Add addon price
-		$addon_price = 0;
-		switch ($addon_selection) {
-			case 'business_presence':
-				$addon_price = 50.0;
-				break;
-			case 'corporate_supplies':
-				$addon_price = 75.0;
-				break;
-			case 's_corporation':
-				$addon_price = 100.0;
-				break;
-			case 'ein':
-				$addon_price = 50.0;
-				break;
-			case 'trade_name':
-				$addon_price = 100.0;
-				break;
-		}
-
-		$total_price = $base_price + $addon_price;
-
-		// Prepare custom data to be stored with the cart item
-		$custom_data = array(
-			'company_names' => $company_names,
-			'business_type' => $this->get_form_value($cart_items, 'business_type'),
-			//'management_type' => $management_type,
-			'filing_option' => $filing_option,
-			'addon_selection' => $addon_selection,
-			'base_price' => $base_price,
-			'addon_price' => $addon_price,
-			'total_price' => $total_price,
-			'order_summary' => $order_summary,
-		);
-
-		// Add members if available
-		if (!empty($member_names)) {
-			$custom_data['members'] = $member_names;
-		}
-
-		// Add managers if available
-		if (!empty($manager_names)) {
-			$custom_data['managers'] = $manager_names;
-		}
-
-		//error_log('manager_names items: ' . print_r($manager_names, true));
-		error_log('custom_data raju items: ' . print_r($custom_data, true));
-
-		// Make sure WC is loaded and cart is available
-		if (!function_exists('WC') || !isset(WC()->cart)) {
-			error_log('WooCommerce cart is not available');
-			wp_send_json_error(array('message' => 'WooCommerce cart is not available'));
-			exit;
-		}
-
-		// Empty the cart first to avoid multiple items (optional - remove if you want to allow multiple items)
-		WC()->cart->empty_cart();
-
-		// Add to cart
 		try {
-			$cart_item_key = WC()->cart->add_to_cart($product_id, 1, 0, array(), array('custom_data' => $custom_data));
+			error_log('Processing custom add to cart');
+			error_log('Received POST data: ' . print_r($_POST, true));
 
-			if ($cart_item_key) {
-				error_log('Product added to cart successfully: ' . $cart_item_key);
-				wp_send_json_success(array(
-					'message' => 'Product added to cart successfully',
-					'redirect' => wc_get_checkout_url(),
-				));
-			} else {
-				error_log('Error adding product to cart');
-				wp_send_json_error(array('message' => 'Error adding product to cart'));
+			// Verify nonce first
+			if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'custom_add_to_cart_nonce')) {
+				throw new Exception('Security check failed');
 			}
-		} catch (Exception $e) {
-			error_log('Exception when adding to cart: ' . $e->getMessage());
-			wp_send_json_error(array('message' => 'Error: ' . $e->getMessage()));
-		}
 
-		exit;
+			// Get product ID directly from POST
+			$product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+			if (!$product_id) {
+				throw new Exception('Product ID is missing');
+			}
+
+			// Get and validate product
+			$product = wc_get_product($product_id);
+			if (!$product) {
+				throw new Exception('Invalid product');
+			}
+
+			// Parse form data
+			$company_names = $this->get_post_array_value('company_name');
+			$member_names = $this->get_post_array_value('member_name');
+			$manager_names = $this->get_post_array_value('manager_name');
+			$addon_selection = $this->get_post_array_value('addon_selection');
+			$filing_option = sanitize_text_field($_POST['filing_option'] ?? '');
+			$business_type = sanitize_text_field($_POST['business_type'] ?? '');
+
+			// Validate required fields
+			if (empty($company_names)) {
+				throw new Exception('Company name is required');
+			}
+
+			if (empty($addon_selection)) {
+				throw new Exception('Business addon selection is required');
+			}
+
+			// Process order summary
+			$order_summary = [];
+			if (!empty($_POST['order_summary'])) {
+				$order_summary = json_decode(wp_unslash($_POST['order_summary']), true);
+				if (json_last_error() !== JSON_ERROR_NONE) {
+					throw new Exception('Invalid order summary format');
+				}
+			}
+
+			// Calculate pricing
+			$pricing = $this->calculate_pricing($filing_option, $addon_selection);
+
+
+			// Handle document uploads
+			$uploaded_docs = $this->handle_document_uploads();
+
+			// Prepare custom data
+			$custom_data = [
+				'company_names' => $company_names,
+				'business_type' => $business_type,
+				'filing_option' => $filing_option,
+				'addon_selection' => $addon_selection,
+				'base_price' => $pricing['base'],
+				'addon_price' => $pricing['addon'],
+				'total_price' => $pricing['total'],
+				'order_summary' => $order_summary,
+				'members' => $member_names,
+				'managers' => $manager_names,
+				// ... your existing data ...
+				'documents' => $uploaded_docs
+			];
+
+			error_log('Processed custom data: ' . print_r($custom_data, true));
+
+			// Validate WooCommerce cart availability
+			if (!function_exists('WC') || !WC()->cart) {
+				throw new Exception('WooCommerce cart is not available');
+			}
+
+			// Process cart
+			WC()->cart->empty_cart();
+			$cart_item_key = WC()->cart->add_to_cart(
+				$product_id,
+				1,
+				0,
+				[],
+				['custom_data' => $custom_data]
+			);
+
+			if (!$cart_item_key) {
+				throw new Exception('Failed to add product to cart');
+			}
+
+			wp_send_json_success([
+				'message' => 'Product added to cart successfully',
+				'redirect' => wc_get_checkout_url()
+			]);
+
+		} catch (Exception $e) {
+			error_log('Error in process_custom_add_to_cart: ' . $e->getMessage());
+			wp_send_json_error(['message' => $e->getMessage()]);
+		}
 	}
 
-	/**
-	 * Helper function to get form values from cart items array
-	 */
-	// private function get_form_values($cart_items, $key)
-	// {
-	// 	$values = array();
+	private function get_post_array_value($field)
+	{
+		if (!isset($_POST[$field]))
+			return [];
 
+		return array_map(
+			'sanitize_text_field',
+			is_array($_POST[$field]) ? $_POST[$field] : [$_POST[$field]]
+		);
+	}
+
+	private function calculate_pricing($filing_option, $addon_selection)
+	{
+		$base_prices = [
+			'basic' => 99.0,
+			'gold' => 199.0,
+			'premium' => 299.0
+		];
+
+		$addon_prices = [
+			'business_presence' => 50.0,
+			'corporate_supplies' => 75.0,
+			's_corporation' => 100.0,
+			'ein' => 50.0,
+			'trade_name' => 100.0
+		];
+
+		$base = $base_prices[strtolower($filing_option)] ?? 99.0;
+		$addon = 0;
+
+		foreach ($addon_selection as $selection) {
+			$addon += $addon_prices[$selection] ?? 0;
+		}
+
+		return [
+			'base' => $base,
+			'addon' => $addon,
+			'total' => $base + $addon
+		];
+	}
+
+	private function handle_document_uploads()
+	{
+		$uploaded = [];
+
+		if (!empty($_FILES)) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+
+			foreach ($_FILES as $key => $file) {
+				if ($file['error'] !== UPLOAD_ERR_OK)
+					continue;
+
+				// Validate file type
+				$allowed = ['jpg', 'jpeg', 'png', 'pdf'];
+				$file_type = wp_check_filetype($file['name']);
+				if (!in_array(strtolower($file_type['ext']), $allowed)) {
+					throw new Exception('Invalid file type for ' . $key);
+				}
+
+				// Validate file size (5MB limit)
+				if ($file['size'] > 5 * 1024 * 1024) {
+					throw new Exception('File size exceeds 5MB limit for ' . $key);
+				}
+
+				// Process upload
+				$upload = wp_handle_upload($file, ['test_form' => false]);
+				if ($upload && !isset($upload['error'])) {
+					$uploaded[$key] = [
+						'url' => $upload['url'],
+						'path' => $upload['file']
+					];
+				} else {
+					throw new Exception('File upload failed: ' . ($upload['error'] ?? 'Unknown error'));
+				}
+			}
+		}
+
+		return $uploaded;
+	}
+
+
+
+	// public function process_custom_add_to_cart()
+	// {
+	// 	error_log('Processing custom add to cart');
+
+	// 	// Verify nonce for security
+	// 	if (isset($_POST['security']) && !wp_verify_nonce($_POST['security'], 'custom_add_to_cart_nonce')) {
+	// 		error_log('Nonce verification failed');
+	// 		wp_send_json_error(array('message' => 'Security check failed'));
+	// 		exit;
+	// 	}
+
+	// 	// Get form data
+	// 	$cart_items = isset($_POST['cart_items']) ? $_POST['cart_items'] : array();
+	// 	$order_summary = isset($_POST['order_summary']) ? $_POST['order_summary'] : array();
+	// 	$total_price = isset($_POST['total_price']) ? $_POST['total_price'] : array();
+
+	// 	// Get product ID
+	// 	$product_id = 0;
 	// 	foreach ($cart_items as $item) {
-	// 		if ($item['name'] === $key . '[]') {
-	// 			$values[] = sanitize_text_field($item['value']);
+	// 		if ($item['name'] === 'product_id') {
+	// 			$product_id = absint($item['value']);
+	// 			break;
 	// 		}
 	// 	}
 
-	// 	return $values;
+	// 	if (!$product_id) {
+	// 		error_log('Product ID is missing');
+	// 		wp_send_json_error(array('message' => 'Product ID is missing'));
+	// 		exit;
+	// 	}
+
+	// 	// Check if product exists
+	// 	$product = wc_get_product($product_id);
+	// 	if (!$product) {
+	// 		error_log('Invalid product ID: ' . $product_id);
+	// 		wp_send_json_error(array('message' => 'Invalid product'));
+	// 		exit;
+	// 	}
+
+	// 	//	error_log('Adding product ID to cart: ' . $product_id);
+
+	// 	// Validate required fields
+	// 	$company_names = $this->get_form_values($cart_items, 'company_name');
+
+	// 	if (empty($company_names)) {
+	// 		wp_send_json_error(array('message' => 'Company name is required'));
+	// 		exit;
+	// 	}
+
+	// 	// Validate management information
+	// 	// $management_type = $this->get_form_value($cart_items, 'management_type');
+	// 	// if ($management_type === 'member') {
+	// 	// 	$member_names = $this->get_form_values($cart_items, 'member_name');
+	// 	// 	$member_emails = $this->get_form_values($cart_items, 'member_email');
+
+	// 	// 	if (empty($member_names) || empty($member_emails)) {
+	// 	// 		wp_send_json_error(array('message' => 'Member information is required'));
+	// 	// 		exit;
+	// 	// 	}
+	// 	// } else {
+	// 	// 	$manager_names = $this->get_form_values($cart_items, 'manager_name');
+	// 	// 	$manager_emails = $this->get_form_values($cart_items, 'manager_email');
+
+	// 	// 	if (empty($manager_names) || empty($manager_emails)) {
+	// 	// 		wp_send_json_error(array('message' => 'Manager information is required'));
+	// 	// 		exit;
+	// 	// 	}
+	// 	// }
+
+
+	// 	// Get members and managers (only names)
+	// 	$member_names = $this->get_form_values($cart_items, 'member_name');
+	// 	$manager_names = $this->get_form_values($cart_items, 'manager_name');
+
+	// 	//error_log('member_names items: ' . print_r($member_names, true));
+	// 	error_log('manager_names items: ' . print_r($cart_items, true));
+	// 	error_log('order_summary items: ' . print_r($order_summary, true));
+	// 	error_log('total_price items: ' . print_r($total_price, true));
+
+	// 	// Validate addon selection
+	// 	$addon_selection = $this->get_form_value($cart_items, 'addon_selection[]');
+	// 	if (empty($addon_selection)) {
+	// 		wp_send_json_error(array('message' => 'Business addon selection is required'));
+	// 		exit;
+	// 	}
+
+	// 	// Get filing option and calculate price
+	// 	$filing_option = $this->get_form_value($cart_items, 'filing_option');
+	// 	$base_price = 99.0; // Default base price
+
+	// 	if ($filing_option === 'gold') {
+	// 		$base_price = 199.0;
+	// 	} elseif ($filing_option === 'premium') {
+	// 		$base_price = 299.0;
+	// 	}
+
+	// 	// Add addon price
+	// 	$addon_price = 0;
+	// 	switch ($addon_selection) {
+	// 		case 'business_presence':
+	// 			$addon_price = 50.0;
+	// 			break;
+	// 		case 'corporate_supplies':
+	// 			$addon_price = 75.0;
+	// 			break;
+	// 		case 's_corporation':
+	// 			$addon_price = 100.0;
+	// 			break;
+	// 		case 'ein':
+	// 			$addon_price = 50.0;
+	// 			break;
+	// 		case 'trade_name':
+	// 			$addon_price = 100.0;
+	// 			break;
+	// 	}
+
+	// 	$total_price = $base_price + $addon_price;
+
+	// 	// Prepare custom data to be stored with the cart item
+	// 	$custom_data = array(
+	// 		'company_names' => $company_names,
+	// 		'business_type' => $this->get_form_value($cart_items, 'business_type'),
+	// 		//'management_type' => $management_type,
+	// 		'filing_option' => $filing_option,
+	// 		'addon_selection' => $addon_selection,
+	// 		'base_price' => $base_price,
+	// 		'addon_price' => $addon_price,
+	// 		'total_price' => $total_price,
+	// 		'order_summary' => $order_summary,
+	// 	);
+
+	// 	// Add members if available
+	// 	if (!empty($member_names)) {
+	// 		$custom_data['members'] = $member_names;
+	// 	}
+
+	// 	// Add managers if available
+	// 	if (!empty($manager_names)) {
+	// 		$custom_data['managers'] = $manager_names;
+	// 	}
+
+	// 	//error_log('manager_names items: ' . print_r($manager_names, true));
+	// 	error_log('custom_data raju items: ' . print_r($custom_data, true));
+
+	// 	// Make sure WC is loaded and cart is available
+	// 	if (!function_exists('WC') || !isset(WC()->cart)) {
+	// 		error_log('WooCommerce cart is not available');
+	// 		wp_send_json_error(array('message' => 'WooCommerce cart is not available'));
+	// 		exit;
+	// 	}
+
+	// 	// Empty the cart first to avoid multiple items (optional - remove if you want to allow multiple items)
+	// 	WC()->cart->empty_cart();
+
+	// 	// Add to cart
+	// 	try {
+	// 		$cart_item_key = WC()->cart->add_to_cart($product_id, 1, 0, array(), array('custom_data' => $custom_data));
+
+	// 		if ($cart_item_key) {
+	// 			error_log('Product added to cart successfully: ' . $cart_item_key);
+	// 			wp_send_json_success(array(
+	// 				'message' => 'Product added to cart successfully',
+	// 				'redirect' => wc_get_checkout_url(),
+	// 			));
+	// 		} else {
+	// 			error_log('Error adding product to cart');
+	// 			wp_send_json_error(array('message' => 'Error adding product to cart'));
+	// 		}
+	// 	} catch (Exception $e) {
+	// 		error_log('Exception when adding to cart: ' . $e->getMessage());
+	// 		wp_send_json_error(array('message' => 'Error: ' . $e->getMessage()));
+	// 	}
+
+	// 	exit;
 	// }
+
 
 	private function get_form_values($cart_items, $key)
 	{

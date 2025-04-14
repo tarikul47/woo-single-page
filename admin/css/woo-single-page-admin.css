@@ -144,3 +144,23 @@
 #custom_checkout_control input[type="checkbox"]:hover {
     border-color: #94a3b8;
 }
+
+
+/* document css */
+
+.document-list {
+    margin: 5px 0;
+    padding-left: 15px;
+}
+
+.document-list li {
+    margin: 3px 0;
+}
+
+.document-list a {
+    text-decoration: none;
+}
+
+.document-list a:hover {
+    text-decoration: underline;
+}

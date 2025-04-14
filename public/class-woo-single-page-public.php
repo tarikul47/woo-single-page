@@ -187,7 +187,7 @@ class Woo_Single_Page_Public
 				$company_names = implode(', ', array_map('esc_html', $custom_data['company_names']));
 				$item->add_meta_data('Companies', $company_names, true);
 			}
-			
+
 			if (!empty($custom_data['business_type'])) {
 				$item->add_meta_data('Business Type ', ucfirst($custom_data['business_type']), true);
 			}
@@ -209,6 +209,26 @@ class Woo_Single_Page_Public
 				}
 				$item->add_meta_data('Managers', trim($managers_list), true);
 			}
+
+			// Add document links
+			if (!empty($custom_data['documents'])) {
+				$documents_html = '<ul class="document-list">';
+				foreach ($custom_data['documents'] as $type => $doc) {
+					$documents_html .= sprintf(
+						'<li><a href="%s" target="_blank" rel="noopener">%s Document</a></li>',
+						esc_url($doc['url']),
+						esc_html(ucfirst($type)) // e.g., "Passport Document"
+					);
+				}
+				$documents_html .= '</ul>';
+
+				$item->add_meta_data(
+					__('Uploaded Documents', 'your-text-domain'),
+					$documents_html,
+					false // Set to false to allow HTML
+				);
+			}
+
 		}
 	}
 

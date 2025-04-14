@@ -54,7 +54,7 @@ $product_price = $product->get_price();
 
     <div class="checkout-content">
         <div class="checkout-form-container">
-            <form id="accordion-checkout-form" method="post">
+            <form id="accordion-checkout-form" method="post" enctype="multipart/form-data">
                 <?php wp_nonce_field('custom_add_to_cart_nonce', 'custom_form_nonce'); ?>
                 <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>">
 
@@ -110,24 +110,78 @@ $product_price = $product->get_price();
                         <span class="toggle-icon"></span>
                     </div>
                     <div class="section-content">
+                        <div id="manager-container" class="management-container">
+                            <div class="manager-entry">
+                                <h3>Manager Information</h3>
+                                <div class="form-group">
+                                    <label for="manager-name-1">Name <span class="required">*</span></label>
+                                    <input type="text" id="manager-name-1" name="manager_name[]" required="">
+                                </div>
+                                <button type="button" class="remove-manager-btn">Remove</button>
+                            </div>
+                        </div>
+                        <div id="member-container" class="management-container"></div>
                         <div class="button-group">
                             <button type="button" class="add-member-btn">+ Add Another Member</button>
                             <button type="button" class="add-manager-btn">+ Add Another Manager</button>
                         </div>
-
-                        <div id="manager-container" class="management-container"></div>
-                        <div id="member-container" class="management-container"></div>
-
                         <div class="section-navigation">
                             <button type="button" class="continue-btn" data-next="4">Continue</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section 4: Filing Options -->
+                <!-- Section 4: Passport and Driving license -->
+                <div class="checkout-section" id="section-6">
+                    <div class="section-header" data-section="5">
+                        <span class="section-number">04</span>
+                        <h2>Document Upload</h2>
+                        <span class="toggle-icon"></span>
+                    </div>
+                    <div class="section-content">
+                        <div class="business-addons">
+                            <p>
+                                <strong>Please select at least one document <span class="required">*</span>
+                                </strong>
+                            </p>
+                            <div class="document-upload">
+                                <label><strong>Select Document <span class="required">*</span></strong></label>
+                                <!-- Add a hidden input for document data -->
+                                <input type="hidden" name="document_data" id="document_data">
+
+                                <select name="document_option" class="document-select">
+                                    <option value="">-- Please select --</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="driving">Driving License</option>
+                                </select>
+
+                                <div id="passport-upload" class="document-input"
+                                    style="display: none; margin-top: 10px;">
+                                    <label for="passport_file">Upload Passport</label>
+                                    <input type="file" id="passport_file" name="passport_file"
+                                        accept="image/*,application/pdf">
+                                </div>
+
+                                <div id="driving-upload" class="document-input"
+                                    style="display: none; margin-top: 10px;">
+                                    <label for="driving_file">Upload Driving License</label>
+                                    <input type="file" id="driving_file" name="driving_file"
+                                        accept="image/*,application/pdf">
+                                </div>
+                            </div>
+
+                            <div class="section-navigation">
+                                <button type="button" class="continue-btn" data-next="4">Continue</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Section 5: Filing Options -->
                 <div class="checkout-section" id="section-4">
                     <div class="section-header" data-section="4">
-                        <span class="section-number">04</span>
+                        <span class="section-number">05</span>
                         <h2>Filing Options</h2>
                         <span class="toggle-icon"></span>
                     </div>
@@ -211,7 +265,7 @@ $product_price = $product->get_price();
                                         $input_id = 'gold-addon-' . esc_attr($key);
                                         ?>
                                         <div class="addon-option">
-                                            <input type="radio" id="<?php echo $input_id; ?>" name="basic_addon"
+                                            <input type="radio" id="<?php echo $input_id; ?>" name="gold_addon"
                                                 value="<?php echo esc_attr($data['value']); ?>"
                                                 data-price="<?php echo esc_attr($data['price']); ?>">
 
@@ -249,7 +303,7 @@ $product_price = $product->get_price();
                                         $input_id = 'premium-addon-' . esc_attr($key);
                                         ?>
                                         <div class="addon-option">
-                                            <input type="radio" id="<?php echo $input_id; ?>" name="basic_addon"
+                                            <input type="radio" id="<?php echo $input_id; ?>" name="premium_addon"
                                                 value="<?php echo esc_attr($data['value']); ?>"
                                                 data-price="<?php echo esc_attr($data['price']); ?>">
 
@@ -278,7 +332,7 @@ $product_price = $product->get_price();
                     </div>
                 </div>
 
-                <!-- Section 5: Business Addons -->
+                <!-- Section 6: Business Addons -->
                 <div class="checkout-section" id="section-5">
                     <div class="section-header" data-section="5">
                         <span class="section-number">05</span>
