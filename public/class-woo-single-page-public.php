@@ -210,14 +210,16 @@ class Woo_Single_Page_Public
 				$item->add_meta_data('Managers', trim($managers_list), true);
 			}
 
-			// Add document links
+			// Add all document links (including bank statement)
 			if (!empty($custom_data['documents'])) {
 				$documents_html = '<ul class="document-list">';
 				foreach ($custom_data['documents'] as $type => $doc) {
+					$label = str_replace('_file', '', $type); // e.g., driving_file => driving
+					$label = str_replace('_', ' ', $label);   // driving => driving
 					$documents_html .= sprintf(
 						'<li><a href="%s" target="_blank" rel="noopener">%s Document</a></li>',
 						esc_url($doc['url']),
-						esc_html(ucfirst($type)) // e.g., "Passport Document"
+						esc_html(ucwords($label)) // Driving, Bank Statement, etc.
 					);
 				}
 				$documents_html .= '</ul>';
@@ -225,9 +227,10 @@ class Woo_Single_Page_Public
 				$item->add_meta_data(
 					__('Uploaded Documents', 'your-text-domain'),
 					$documents_html,
-					false // Set to false to allow HTML
+					false
 				);
 			}
+
 
 		}
 	}

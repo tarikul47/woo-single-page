@@ -549,8 +549,6 @@
       let isValid = true;
       let errorMessage = "";
 
-      console.log(sectionId);
-
       switch (sectionId) {
         case 1:
           $(".company-entry").each(function () {
@@ -609,12 +607,54 @@
           break;
 
         case 4:
-          const $documentSection = $(".document-upload");
-          const documentOption = $('select[name="document_option"]').val();
-          let fileUploaded = false;
+          const $fillingSection = $(".filing-option label");
+          const $basicChecked = $('input[name="basic_addon"]:checked');
+          const $goldChecked = $('input[name="gold_addon"]:checked');
+          const $premiumChecked = $('input[name="premium_addon"]:checked');
 
+          if (
+            !$basicChecked.length &&
+            !$goldChecked.length &&
+            !$premiumChecked.length
+          ) {
+            isValid = false;
+            errorMessage = "Please select at least one option.";
+            $fillingSection.addClass("error"); // Add error styling
+          } else {
+            errorMessage = "";
+            $fillingSection.removeClass("error"); // Remove error styling if valid
+          }
+          break;
+
+        case 50:
+          const $addonSection = $(".business-addons");
+          const $addonsChecked = $('input[name="addon_selection[]"]:checked');
+          console.log($addonsChecked);
+
+          if (!$addonsChecked.length) {
+            isValid = false;
+            errorMessage = "Please select at least one business addon.";
+            $addonSection.addClass("error"); // Add error styling
+          } else {
+            $addonSection.removeClass("error"); // Remove error styling if valid
+          }
+          break;
+
+        case 6:
+          const $documentSection = $(".document-upload");
+          const $documentSelect = $('select[name="document_option"]');
+          const documentOption = $documentSelect.val();
+
+          let fileUploaded = false;
           // Only validate if document option is selected
-          if (documentOption) {
+          if (!documentOption) {
+            isValid = false;
+            if (!errorMessage) {
+              errorMessage = "Please select a document type.";
+              $documentSelect.addClass("error");
+              $documentSection.addClass("error");
+            }
+          } else {
             const $fileInput = $(`#${documentOption}_file`);
             const fileName = $fileInput.val().trim();
 
@@ -636,9 +676,19 @@
                 $documentSection.addClass("error");
                 $fileInput.closest(".document-input").addClass("error");
               } else {
-                $documentSection.removeClass("error");
-                $fileInput.closest(".document-input").removeClass("error");
-                fileUploaded = true;
+                // ✅ File type is valid — now check size
+                const fileSize = $fileInput[0].files[0]?.size || 0;
+                if (fileSize > 5 * 1024 * 1024) {
+                  isValid = false;
+                  errorMessage = "File size exceeds 5MB limit.";
+                  $documentSection.addClass("error");
+                  $fileInput.closest(".document-input").addClass("error");
+                } else {
+                  // All validations passed
+                  $documentSection.removeClass("error");
+                  $fileInput.closest(".document-input").removeClass("error");
+                  fileUploaded = true;
+                }
               }
             }
           }
@@ -652,42 +702,43 @@
           }
           break;
 
-        case 5:
-          const $fillingSection = $(".filing-option label");
-          const $basicChecked = $('input[name="basic_addon"]:checked');
-          const $goldChecked = $('input[name="gold_addon"]:checked');
-          const $premiumChecked = $('input[name="premium_addon"]:checked');
+        case 7:
+          const $bankSection = $(".bank-statement-upload");
+          const $fileInput = $("#bank_statement_file");
+          const fileName = $fileInput.val().trim();
 
-          if (
-            !$basicChecked.length &&
-            !$goldChecked.length &&
-            !$premiumChecked.length
-          ) {
+          // Reset error states
+          //  $bankSection.removeClass("error");
+          $fileInput.removeClass("error");
+
+          if (!fileName) {
             isValid = false;
-            errorMessage = "Please select at least one option.";
-            $fillingSection.addClass("error"); // Add error styling
+            errorMessage = "Bank statement upload is required.";
+            //  $bankSection.addClass("error");
+            $fileInput.addClass("error");
           } else {
-            errorMessage = "";
-            $fillingSection.removeClass("error"); // Remove error styling if valid
-          }
-          break;
+            // Validate file type
+            const allowedExtensions = /(\.pdf|\.jpg|\.jpeg|\.png)$/i;
+            if (!allowedExtensions.exec(fileName)) {
+              isValid = false;
+              errorMessage =
+                "Invalid file type. Allowed formats: PDF, JPG, JPEG, PNG.";
+              //  $bankSection.addClass("error");
+              $fileInput.addClass("error");
+            }
 
-        case 6:
-          const $addonSection = $(".business-addons");
-          const $addonsChecked = $('input[name="addon_selection[]"]:checked');
-          console.log($addonsChecked);
-
-          if (!$addonsChecked.length) {
-            isValid = false;
-            errorMessage = "Please select at least one business addon.";
-            $addonSection.addClass("error"); // Add error styling
-          } else {
-            $addonSection.removeClass("error"); // Remove error styling if valid
+            // Validate file size (client-side)
+            const fileSize = $fileInput[0].files[0]?.size || 0;
+            if (fileSize > 5 * 1024 * 1024) {
+              // 5MB
+              isValid = false;
+              errorMessage = "File size exceeds 5MB limit.";
+              // $bankSection.addClass("error");
+              $fileInput.addClass("error");
+            }
           }
           break;
       }
-
-      if (!isValid && errorMessage) alert(errorMessage);
 
       // Existing error handling
       if (!isValid && errorMessage) {

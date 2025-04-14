@@ -131,57 +131,10 @@ $product_price = $product->get_price();
                     </div>
                 </div>
 
-                <!-- Section 4: Passport and Driving license -->
-                <div class="checkout-section" id="section-6">
-                    <div class="section-header" data-section="5">
-                        <span class="section-number">04</span>
-                        <h2>Document Upload</h2>
-                        <span class="toggle-icon"></span>
-                    </div>
-                    <div class="section-content">
-                        <div class="business-addons">
-                            <p>
-                                <strong>Please select at least one document <span class="required">*</span>
-                                </strong>
-                            </p>
-                            <div class="document-upload">
-                                <label><strong>Select Document <span class="required">*</span></strong></label>
-                                <!-- Add a hidden input for document data -->
-                                <input type="hidden" name="document_data" id="document_data">
-
-                                <select name="document_option" class="document-select">
-                                    <option value="">-- Please select --</option>
-                                    <option value="passport">Passport</option>
-                                    <option value="driving">Driving License</option>
-                                </select>
-
-                                <div id="passport-upload" class="document-input"
-                                    style="display: none; margin-top: 10px;">
-                                    <label for="passport_file">Upload Passport</label>
-                                    <input type="file" id="passport_file" name="passport_file"
-                                        accept="image/*,application/pdf">
-                                </div>
-
-                                <div id="driving-upload" class="document-input"
-                                    style="display: none; margin-top: 10px;">
-                                    <label for="driving_file">Upload Driving License</label>
-                                    <input type="file" id="driving_file" name="driving_file"
-                                        accept="image/*,application/pdf">
-                                </div>
-                            </div>
-
-                            <div class="section-navigation">
-                                <button type="button" class="continue-btn" data-next="4">Continue</button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Section 5: Filing Options -->
+                <!-- Section 4: Filing Options -->
                 <div class="checkout-section" id="section-4">
                     <div class="section-header" data-section="4">
-                        <span class="section-number">05</span>
+                        <span class="section-number">04</span>
                         <h2>Filing Options</h2>
                         <span class="toggle-icon"></span>
                     </div>
@@ -332,7 +285,7 @@ $product_price = $product->get_price();
                     </div>
                 </div>
 
-                <!-- Section 6: Business Addons -->
+                <!-- Section 5: Business Addons -->
                 <div class="checkout-section" id="section-5">
                     <div class="section-header" data-section="5">
                         <span class="section-number">05</span>
@@ -369,7 +322,101 @@ $product_price = $product->get_price();
                             </div>
                         </div>
                         <div class="section-navigation">
-                            <button type="submit" class="submit-order" id="submit-button">Submit Order</button>
+                            <button type="button" class="continue-btn" data-next="6">Continue</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Passport and Driving license -->
+                <div class="checkout-section" id="section-6">
+                    <div class="section-header" data-section="6">
+                        <span class="section-number">06</span>
+                        <h2>Document Upload</h2>
+                        <span class="toggle-icon"></span>
+                    </div>
+                    <div class="section-content">
+                        <div class="business-addons">
+                            <p>
+                                <strong>Please select at least one document <span class="required">*</span>
+                                </strong>
+                            </p>
+                            <div class="document-upload">
+                                <div class="upload-instructions">
+                                    <p class="requirements">
+                                        <strong>Requirements:</strong><br>
+                                        - PDF, JPG, or PNG format<br>
+                                        - Maximum file size: 5MB<br>
+                                        - Statement must be recent (within 3 months)
+                                    </p>
+                                </div>
+                                <label><strong>Select Document <span class="required">*</span></strong></label>
+                                <!-- Add a hidden input for document data -->
+                                <input type="hidden" name="document_data" id="document_data">
+
+                                <select name="document_option" class="document-select">
+                                    <option value="">-- Please select --</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="driving">Driving License</option>
+                                </select>
+
+                                <div id="passport-upload" class="document-input"
+                                    style="display: none; margin-top: 10px;">
+                                    <label for="passport_file">Upload Passport</label>
+                                    <input type="file" id="passport_file" name="passport_file"
+                                        accept="image/*,application/pdf">
+                                </div>
+
+                                <div id="driving-upload" class="document-input"
+                                    style="display: none; margin-top: 10px;">
+                                    <label for="driving_file">Upload Driving License</label>
+                                    <input type="file" id="driving_file" name="driving_file"
+                                        accept="image/*,application/pdf">
+                                </div>
+                            </div>
+
+                            <div class="section-navigation">
+                                <button type="button" class="continue-btn" data-next="7">Continue</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Section 7: Bank Statement Upload -->
+                <div class="checkout-section" id="section-7">
+                    <div class="section-header" data-section="7">
+                        <span class="section-number">07</span>
+                        <h2>Bank Statement Upload</h2>
+                        <span class="toggle-icon"></span>
+                    </div>
+                    <div class="section-content">
+                        <div class="bank-statement-upload">
+                            <div class="document-upload">
+                                <div class="upload-instructions">
+                                    <p class="requirements">
+                                        <strong>Requirements:</strong><br>
+                                        - PDF, JPG, or PNG format<br>
+                                        - Maximum file size: 5MB<br>
+                                        - Statement must be recent (within 3 months)
+                                    </p>
+                                </div>
+
+                                <div class="bank-statement-input">
+                                    <label for="bank_statement_file">
+                                        Upload Bank Statement
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="file" id="bank_statement_file" name="bank_statement_file"
+                                        accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <div class="file-requirements">
+                                        Accepted formats: .pdf, .jpg, .jpeg, .png
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section-navigation">
+                                <button type="button" class="continue-btn" data-next="8">Continue</button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -360,9 +360,9 @@ class Woo_Single_Page_Admin
 				throw new Exception('Company name is required');
 			}
 
-			if (empty($addon_selection)) {
-				throw new Exception('Business addon selection is required');
-			}
+			// if (empty($addon_selection)) {
+			// 	throw new Exception('Business addon selection is required');
+			// }
 
 			// Process order summary
 			$order_summary = [];
@@ -396,7 +396,7 @@ class Woo_Single_Page_Admin
 				'documents' => $uploaded_docs
 			];
 
-			error_log('Processed custom data: ' . print_r($custom_data, true));
+			//error_log('Processed custom data: ' . print_r($custom_data, true));
 
 			// Validate WooCommerce cart availability
 			if (!function_exists('WC') || !WC()->cart) {

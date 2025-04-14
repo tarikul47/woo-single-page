@@ -622,6 +622,59 @@ input[type="file"] {
     border-radius: 6px;
 }
 
+/* Bank Statement CSS */
+
+/* Bank Statement Upload Styling */
+.bank-statement-upload {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.upload-instructions {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+.requirements {
+    color: #666;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.bank-statement-input {
+    margin-top: 20px;
+}
+
+.bank-statement-input label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.file-requirements {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Error States */
+.bank-statement-upload.error {
+    border: 2px solid #ff4444;
+    background: #fff6f6;
+}
+
+.bank-statement-input.error input {
+    border-color: #ff4444;
+}
+
+.bank-statement-input.error label {
+    color: #ff4444;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
